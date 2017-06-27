@@ -32,3 +32,49 @@ target/
 tests/**/.metadata/
 **/src/site/resources/images/rcptt-screenshots
 
+
+
+
+
+
+
+
+target/
+out/
+
+app/bin/
+app/gen/
+app/build/
+app/out/
+app/target/
+
+test/bin/
+test/gen/
+test/build/
+test/out/
+test/target/
+
+gen-external-apklibs/
+
+## ignore certain files
+test/proguard.cfg
+
+## ignore keystores related files
+*.keystore
+release.properties
+
+## ignore IDE project files
+*.iml
+.idea/
+.project
+.settings/
+.classpath
+.metadata
+.checkstyle
+
+## ignore temp files from various editors
+.DS_Store
+*~
+*.swp
+Back to Top
+
