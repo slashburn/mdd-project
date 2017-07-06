@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="">
+  <eClassifiers xsi:type="ecore:EClass" name="Behaviour">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" upperBound="-1"
+        eType="#//Block" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Block">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="prestate" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="poststate" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inmessage" eType="#//InMessage"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="activation" eType="#//Activation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="State"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InMessage">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operation" eType="#//Operation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Activation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outmessage" upperBound="-1"
+        eType="#//OutMessage" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="return" eType="#//Return"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Operation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Object"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Return"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OutMessage">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operation" eType="#//Operation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="object" eType="#//Object"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="return" eType="#//Return"/>
+  </eClassifiers>
+</ecore:EPackage>
