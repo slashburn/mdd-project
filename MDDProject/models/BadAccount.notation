@@ -135,7 +135,7 @@
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_JIvpgGO8EeeL7uxLFQmmVg" type="Message_SynchEdge" source="_FslEoGO8EeeL7uxLFQmmVg" target="_JJHc8GO8EeeL7uxLFQmmVg">
     <children xmi:type="notation:DecorationNode" xmi:id="_JIvpg2O8EeeL7uxLFQmmVg" type="Message_SynchNameLabel">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_JIvphGO8EeeL7uxLFQmmVg" x="1" y="-13"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_JIvphGO8EeeL7uxLFQmmVg" x="-42" y="-14"/>
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_JIvphWO8EeeL7uxLFQmmVg" type="Message_SynchStereotypeLabel">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_JIvphmO8EeeL7uxLFQmmVg" x="1" y="-33"/>
