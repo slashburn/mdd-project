@@ -1,4 +1,7 @@
-transformation Transformation();
+modeltype UML uses  "http://www.eclipse.org/uml2/5.0.0/UML";
+modeltype ScenarioModel uses "mm:sequencediagram";
+
+transformation umlToScenario(in ssd: UML, out scenarios: ScenarioModel) ;
 
 main() {
 
