@@ -1,11 +1,173 @@
 modeltype BehaviourModel uses "mm:behaviour";
 modeltype ScenarioModel uses "mm:sequencediagram";
 
-transformation umlToScenario(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
 
-property actorStateDict : Dict(String, String);
+transformation umlToScenario(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
+property doneActors : Set(String);
+
 main() {
+	scenarios.objectsOfType(Scenario)->map scenarioToBehaviourContainer();
+}
+
+mapping Scenario::scenarioToBehaviourContainer() : BehaviourContainer {
+	init {
+		doneActors := Set {};
+		var systemObjects := scenarios->objectsOfType(SystemObject)->asSet()->flatten();
 	
+		systemObjects->forEach(systemObject) {
+			if(not doneActors->exists(actor | actor = systemObject.name)) {
+				log("SystemObject: "+ systemObject.name);
+				var behaviour:= self.createBehaviour(systemObject.name);
+				var communicationsForSysObject := self.communication->getCommunicationsForSystemObject(systemObject);
+				
+				behaviour.block := communicationsForSysObject->map communicationsToBlocks(systemObject);
+				result.behaviour += behaviour;
+				doneActors += systemObject.name;
+				
+				
+			};
+		};
+		
+		
+	}
+	
+}
+
+mapping OrderedSet(Communication)::communicationsToBlocks(systemObject: SystemObject) : OrderedSet(Block) {
+	init {
+		log("creating blocks out of the communications from " + systemObject.name);
+		self->forEach(comm) {
+			var block : Block;
+			
+			//TODO
+			if(comm.oclIsTypeOf(SystemCommunication)) {
+				var systemComm := comm.oclAsType(SystemCommunication);
+				
+				//map communication to a new block
+				if(systemComm.systemmessage.systemobject.name = systemObject.name) {
+					//receiver of system communication is system object (method argument)
+					block := createBlock(systemComm);
+					result += block;
+				}
+				else if (systemComm.systemmessage._object.name = systemObject.name){
+					block := result->last();
+					block.activation.outmessage += systemComm->map systemCommunicationToOutMessage();
+				}
+			}
+			else if(comm.oclIsTypeOf(UserCommunication)) {
+				var userComm := comm.oclAsType(UserCommunication);
+				block := result->last();
+				block.activation.outmessage += userComm->map userCommunicatonToOutMessage();
+			}
+		}
+	}
+	
+}
+
+mapping SystemCommunication::systemCommunicationToOutMessage() : OutMessage {
+	result.operation := object Operation {
+		name := self.systemmessage.operation.name;
+	};
+	result._object := object Object {
+		name := self.systemmessage._object.name;
+	};
+	result._return := object Return {
+		if(self._return.oclIsTypeOf(Void)) {
+			_return := object Return {
+				value := "void"
+			}
+		} 
+		else {
+			var oldReturn := self._return.oclAsType(ssdRoot::Value);
+			_return := object Return{
+				value := oldReturn.value
+			}
+		};
+	}
+	
+}
+
+mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
+	result.operation := object Operation {
+		name := self.usermessage.operation.name;
+	};
+	result._object := object Object {
+		name := self.usermessage._object.name;
+	};
+	result._return := object Return {
+		if(self._return.oclIsTypeOf(Void)) {
+			_return := object Return {
+				value := "void"
+			}
+		} 
+		else {
+			var oldReturn := self._return.oclAsType(ssdRoot::Value);
+			_return := object Return{
+				value := oldReturn.value
+			}
+		};
+	}
+}
+
+
+
+
+
+query Scenario::createBehaviour(actor: String) : Behaviour {
+	return object Behaviour {
+		sender := actor;
+	}
+}
+
+query OrderedSet(ssdRoot::Communication)::getCommunicationsForSystemObject(systemObject: SystemObject) : OrderedSet(Communication) {
+	log("Computing communications for System Object: "+ systemObject.name);
+	var communications: OrderedSet(Communication);
+	
+	self->forEach(comm) {
+		if (comm.oclIsKindOf(SystemCommunication)) {
+			var systemComm := comm.oclAsType(SystemCommunication);
+			if	(systemComm.systemmessage._object.name = systemObject.name or
+				systemComm.systemmessage.systemobject.name = systemObject.name) {
+					communications += comm;
+			}
+		}
+		else if (comm.oclIsKindOf(UserCommunication)) {
+			var userComm := comm.oclAsType(UserCommunication);
+			if(userComm.usermessage._object.name = systemObject.name) {
+				communications += comm;
+			}
+		}
+	};
+	
+	log("#communications: "+ communications->size().toString());
+	return communications;
+}
+query createBlock(systemCommunication: SystemCommunication) : Block {
+	return object Block {
+		prestate := object State {
+			name := systemCommunication.firstState.name
+		};
+		poststate := object State {
+			name := systemCommunication.secondState.name
+		};
+		inmessage := object InMessage {
+			operation := object Operation {
+				name := systemCommunication.systemmessage.operation.name
+			}
+		};
+		activation := object Activation {
+			if(systemCommunication._return.oclIsTypeOf(Void)) {
+				_return := object Return{
+					value := "void"
+				}
+			} else {
+				var oldReturn := systemCommunication._return.oclAsType(ssdRoot::Value);
+				_return := object Return{
+					value := oldReturn.value
+				}
+			};
+		}
+	}
 }
 
 

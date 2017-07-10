@@ -21,7 +21,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Activation">
     <eStructuralFeatures xsi:type="ecore:EReference" name="outmessage" upperBound="-1"
         eType="#//OutMessage" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="return" eType="#//Return"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_return" eType="#//Return"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Operation">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -34,8 +34,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OutMessage">
     <eStructuralFeatures xsi:type="ecore:EReference" name="operation" eType="#//Operation"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="object" eType="#//Object"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="return" eType="#//Return"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_object" eType="#//Object"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_return" eType="#//Return"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BehaviourContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="behaviour" upperBound="-1"
