@@ -21,7 +21,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="secondState" ordered="false"
         lowerBound="1" eType="#//State"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="State"/>
+  <eClassifiers xsi:type="ecore:EClass" name="State">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SystemMessage">
     <eStructuralFeatures xsi:type="ecore:EReference" name="object" ordered="false"
         lowerBound="1" eType="#//Object"/>
@@ -30,7 +32,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="systemobject" ordered="false"
         lowerBound="1" eType="#//SystemObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Object"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Object">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Operation"/>
   <eClassifiers xsi:type="ecore:EClass" name="SystemObject" eSuperTypes="#//Object"/>
   <eClassifiers xsi:type="ecore:EClass" name="UserMessage">
@@ -42,6 +46,8 @@
         eType="#//User"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="User" eSuperTypes="#//Object"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Value" eSuperTypes="#//Return"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Value" eSuperTypes="#//Return">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Void" eSuperTypes="#//Return"/>
 </ecore:EPackage>
