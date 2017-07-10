@@ -1,0 +1,11 @@
+modeltype BehaviourModel uses "mm:behaviour";
+modeltype ScenarioModel uses "mm:sequencediagram";
+
+transformation umlToScenario(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
+
+property actorStateDict : Dict(String, String);
+main() {
+	
+}
+
+
