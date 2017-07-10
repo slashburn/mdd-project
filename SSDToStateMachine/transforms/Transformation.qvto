@@ -1,5 +1,16 @@
-transformation Transformation();
+import umlToScenario;
+
+modeltype UML uses  "http://www.eclipse.org/uml2/5.0.0/UML";
+modeltype ScenarioModel uses "mm:sequencediagram";
+
+transformation Transformation (in sequence : UML, out statemachine : ScenarioModel)
+	access transformation umlToScenario(in UML, out ScenarioModel);
+
 
 main() {
 
+	var scenarios := ScenarioModel.createEmptyModel().oclAsType(ScenarioModel);
+	var uml2Scenario := new umlToScenario(sequence, statemachine);
+	
+	uml2Scenario.transform();
 }
