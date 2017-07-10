@@ -7,8 +7,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Communication" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="UserCommunication" eSuperTypes="#//Communication">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="return" ordered="false"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_return" ordered="false"
         lowerBound="1" eType="#//Return"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="usermessage" eType="#//UserMessage"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Return"/>
   <eClassifiers xsi:type="ecore:EClass" name="SystemCommunication" eSuperTypes="#//Communication">
@@ -16,7 +17,7 @@
         lowerBound="1" eType="#//State"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="systemmessage" ordered="false"
         lowerBound="1" eType="#//SystemMessage"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="return" ordered="false"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_return" ordered="false"
         lowerBound="1" eType="#//Return"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="secondState" ordered="false"
         lowerBound="1" eType="#//State"/>
@@ -25,7 +26,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SystemMessage">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="object" ordered="false"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_object" ordered="false"
         lowerBound="1" eType="#//Object"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="operation" ordered="false"
         lowerBound="1" eType="#//Operation"/>
@@ -35,10 +36,12 @@
   <eClassifiers xsi:type="ecore:EClass" name="Object">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Operation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Operation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SystemObject" eSuperTypes="#//Object"/>
   <eClassifiers xsi:type="ecore:EClass" name="UserMessage">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="object" ordered="false"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="_object" ordered="false"
         lowerBound="1" eType="#//Object"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="operation" ordered="false"
         lowerBound="1" eType="#//Operation"/>
