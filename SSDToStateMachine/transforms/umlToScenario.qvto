@@ -5,12 +5,12 @@ transformation umlToScenario(in ssd: UML, out scenarios: ScenarioModel) ;
 
 property actorStateDict : Dict(String, String);
 main() {
-	ssd.objectsOfType(InteractionFragment)->map interactionFragmentToScenario();
+	ssd.objectsOfType(Interaction)->map interactionToScenario();
 }
 
 
-mapping InteractionFragment::interactionFragmentToScenario() : Scenario {
-	self->forEach(interactionFragment) {
+mapping Interaction::interactionToScenario() : Scenario {
+	self.fragment->forEach(interactionFragment) {
 		
 		
 		if (interactionFragment.oclIsTypeOf(StateInvariant)) {
@@ -52,7 +52,10 @@ mapping InteractionFragment::interactionFragmentToScenario() : Scenario {
 			}
 		
 		}
-	}	
+	};
+	
+	log("finished");
+		
 }
 
 

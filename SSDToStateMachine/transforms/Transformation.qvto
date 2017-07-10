@@ -11,6 +11,6 @@ main() {
 
 	var scenarios := ScenarioModel.createEmptyModel().oclAsType(ScenarioModel);
 	var uml2Scenario := new umlToScenario(sequence, statemachine);
-	
+	log ("start transformation");
 	uml2Scenario.transform();
 }
