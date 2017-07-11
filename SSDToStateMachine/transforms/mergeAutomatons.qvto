@@ -1,0 +1,172 @@
+modeltype IOAutomatonModel uses "mm:ioautomaton";
+
+transformation behaviourToAutomaton(in automata: IOAutomatonModel, out mergedAutomaton: IOAutomatonModel);
+
+main() {
+	log("\n\nTransformation Automata -> Automaton");
+	automata.objectsOfType(AutomatonContainer)->map mergeAutomatons();	
+}
+
+mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
+	self.automaton.sender->asSet()->forEach(sender) {
+		log("Mapping automaton for " + sender);
+		
+		var senderAutomata := self.automaton->select(automaton | automaton.sender = sender);
+		result.automaton += senderAutomata->mergeAutomata(sender);
+	}
+	
+}
+
+helper Set(Automaton)::mergeAutomata(sender : String) : Automaton {
+	var resultAutomaton := object Automaton {};
+	
+	//eliminate duplicates
+	var duplicateFreeStates := eliminateDuplicateStates(self);
+	var duplicateFreeTransitions := eliminateDuplicateTransitions(self, duplicateFreeStates);
+	
+	duplicateFreeStates->forEach(state) {
+		adjustTransitions(state, duplicateFreeTransitions);
+	};
+	
+	resultAutomaton.initialstate := resultAutomaton.state-> findState(self->asSequence()->first().initialstate.name);
+	resultAutomaton.state := duplicateFreeStates;
+	resultAutomaton.transition := duplicateFreeTransitions;
+	return resultAutomaton;
+}
+
+
+helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Transition)) {
+	var adjustedIncomingTransitions : Set(Transition);
+	state.incomingtransition->forEach(transition) {
+		adjustedIncomingTransitions += duplicateFreeTransitions->findTransition(transition.prestate, transition.poststate);
+	};
+	state.incomingtransition := adjustedIncomingTransitions;
+	
+	
+	var adjustedOutgoingTransitions : Set(Transition);
+	state.outgoingtransition->forEach(transition) {
+		adjustedOutgoingTransitions += duplicateFreeTransitions->findTransition(transition.prestate, transition.poststate);
+	};
+	state.outgoingtransition := adjustedOutgoingTransitions;	
+}
+
+query Set(Transition)::findTransition(prestate: State, poststate: State) : Transition {
+	self->forEach(transition | transition.prestate.name = prestate.name and transition.poststate.name = poststate.name) {
+		return transition;
+	};
+	log("!!!!!fatal error: Transition in findTransition(mergeAutomaton.qvto) not found.");
+	return null;
+}
+
+helper eliminateDuplicateTransitions(allAutomata: Set(Automaton), duplicateFreeStates:Set(State)) : Set(Transition) {
+	var transitions : Set(Transition);
+	
+	allAutomata->forEach(automaton) {
+		automaton.transition->forEach(transition | not transitions->containsTransition(transition)) {
+			transitions += createTransition(transition, duplicateFreeStates);
+		}
+	};
+	return transitions;
+}
+
+query createTransition(transition: Transition, states: Set(State)) : Transition {
+	return object Transition {
+		operation := createOperation(transition.operation.name);
+		outmessage := createOutMessages(transition.outmessage);
+		_return := createReturn(transition._return.value);
+		prestate := states->findState(transition.prestate.name);
+		poststate := states->findState(transition.poststate.name);
+		log("created new transition: "+ prestate.name + " -> "+ poststate.name);
+	}
+	
+	
+}
+query Set(State)::findState(stateName: String) : State {
+	self->forEach(state | state.name = stateName) {
+		return state;
+	};
+	log("!!!!!fatal error: state in findState(mergeAutomaton.qvto) not found");
+	return null;
+}
+query Set(Transition)::containsTransition(transition: Transition) : Boolean {
+	self->forEach(t) {
+		if(	t.operation.name != transition.operation.name or 
+			t.prestate.name != transition.prestate.name or
+		 	t.poststate.name != transition.poststate.name or
+		 	t.outmessage->size() != transition.outmessage->size()) {
+		 	
+		 	continue;
+		};
+		
+		var transitionsSetsNotEqual := false;
+		t.outmessage->forEach(outMsg | not transition.outmessage->containsOutMessage(outMsg)){
+			transitionsSetsNotEqual := true;
+			break;
+		};
+		if(transitionsSetsNotEqual) {
+			continue;
+		};
+		return true;	
+	};
+	return false;
+}
+
+
+
+query Set(OutMessage)::containsOutMessage(outMessage: OutMessage) : Boolean {
+	self->forEach(message) {
+		if(	message._return.value = outMessage._return.value and
+			message.operation.name = outMessage.operation.name and 
+			message._object.name = outMessage._object.name) {
+			
+			return true;
+			
+		}
+	};
+	return false;
+}
+helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
+	var stateDict : Dict(String, State);
+	
+	allAutomata->forEach(automaton) {
+		automaton.state->forEach(state) {
+			stateDict->put(state.name, state);
+		}
+	};
+	
+	return stateDict->values()->asSet();
+}
+
+
+
+query createOutMessages(outMessage: Set(OutMessage)) : Set(OutMessage) {
+	var resultMessages: Set(OutMessage);
+	outMessage->forEach(message) {
+		resultMessages += object OutMessage {
+			operation := createOperation(message.operation.name);
+			_object := createObject(message._object.name);
+			_return := createReturn(message._return.value);
+		}	
+	};
+	return resultMessages;
+}
+
+query createOperation(operationName: String): ioautomaton::Operation {
+	return object ioautomaton::Operation {
+		name := operationName
+	}
+}
+query createReturn(returnValue: String): ioautomaton::Return {
+	return object ioautomaton::Return {
+		value := returnValue
+	}
+}
+query createObject(objectName: String): ioautomaton::Object {
+	return object ioautomaton::Object {
+		name := objectName
+	}
+}
+
+
+
+
