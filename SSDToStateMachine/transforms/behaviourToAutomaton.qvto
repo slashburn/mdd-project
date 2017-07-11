@@ -1,0 +1,9 @@
+modeltype BehaviourModel uses "mm:behaviour";
+modeltype IOAutomatonModel uses "mm::ioautomaton";
+
+transformation behaviourToAutomaton(in behaviours: BehaviourModel, out automations: IOAutomatonModel) ;
+
+main() {
+
+}
+
