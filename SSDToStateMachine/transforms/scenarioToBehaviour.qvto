@@ -2,7 +2,7 @@ modeltype BehaviourModel uses "mm:behaviour";
 modeltype ScenarioModel uses "mm:sequencediagram";
 
 
-transformation umlToScenario(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
+transformation scenarioToBehaviour(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
 property doneActors : Set(String);
 
 main() {
