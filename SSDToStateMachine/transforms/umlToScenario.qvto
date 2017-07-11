@@ -4,14 +4,20 @@ modeltype ScenarioModel uses "mm:sequencediagram";
 transformation umlToScenario(in ssd: UML, out scenarios: ScenarioModel) ;
 
 property actorStateDict : Dict(String, String);
+
 main() {
-	ssd.objectsOfType(Interaction)->map interactionToScenario();
+	ssd.objectsOfType(Model)->map modelToScenarioContainer();
 }
 
+mapping Model::modelToScenarioContainer() : ScenarioContainer {
+	result.scenario += self.packagedElement->selectByType(Interaction)->map interactionToScenario();
+}
 
 mapping Interaction::interactionToScenario() : Scenario {
-	self.fragment->forEach(interactionFragment) {
+	
+	actorStateDict->clear();	
 		
+	self.fragment->forEach(interactionFragment) {		
 		
 		if (interactionFragment.oclIsTypeOf(StateInvariant)) {
 			var stateInvariant := interactionFragment.oclAsType(StateInvariant);
