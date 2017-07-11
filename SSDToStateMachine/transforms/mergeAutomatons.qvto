@@ -30,8 +30,8 @@ helper Set(Automaton)::mergeAutomata(sender : String) : Automaton {
 		adjustTransitions(state, duplicateFreeTransitions);
 	};
 	
-	resultAutomaton.initialstate := resultAutomaton.state-> findState(self->asSequence()->first().initialstate.name);
 	resultAutomaton.state := duplicateFreeStates;
+	resultAutomaton.initialstate := resultAutomaton.state-> findState(self->asSequence()->first().initialstate.name);	
 	resultAutomaton.transition := duplicateFreeTransitions;
 	return resultAutomaton;
 }
@@ -127,12 +127,16 @@ query Set(OutMessage)::containsOutMessage(outMessage: OutMessage) : Boolean {
 	};
 	return false;
 }
+
 helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
 	var stateDict : Dict(String, State);
 	
 	allAutomata->forEach(automaton) {
 		automaton.state->forEach(state | not stateDict->hasKey(state.name)) {
-			stateDict->put(state.name, state);
+			var newState := object State {
+				name := state.name;
+			};
+			stateDict->put(state.name, newState);
 		}
 	};
 	
