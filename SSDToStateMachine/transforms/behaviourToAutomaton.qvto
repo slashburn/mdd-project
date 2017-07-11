@@ -20,7 +20,7 @@ mapping BehaviourContainer::behaviourContainerToAutomatonContainer() : Automaton
 
 mapping Behaviour::behaviourToAutomaton() : Automaton {
 	
-	log("Mapping behaviour of sender " + self.sender);
+	log("\nMapping behaviour of sender " + self.sender);
 	
 	result.sender := self.sender;
 	result.initialstate := createState(result, self.block->first().prestate.name);
