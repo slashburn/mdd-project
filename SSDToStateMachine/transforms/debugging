@@ -7,7 +7,7 @@ main() {
 	automata.objectsOfType(AutomatonContainer)->map mergeAutomatons();	
 }
 
-mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
+/*mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
 		
 	self.automaton.sender->asSet()->forEach(sender) {
 		log("Mapping automaton for " + sender);
@@ -18,10 +18,87 @@ mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
 		result.automaton += resultAutomaton;
 	}
 	
+}*/
+
+mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
+	
+	init {
+		log("Start merge()");
+	
+		var mainActorNames := self.automaton.sender->asSet();
+		var automataResult := object AutomatonContainer{};
+		mainActorNames->forEach(mainActorName | true) {
+			log("Actor " + mainActorName);
+			var automataForActor := self.automaton->select(automaton | automaton.sender = mainActorName);
+			var mergedAutomaton := automataForActor->mergeAutomata();
+
+			mergedAutomaton.sender := mainActorName;
+			automataResult.automaton += mergedAutomaton;
+		};
+		result := automataResult;
+	}
+	
+	end {
+		log("Finished automata merge()");
+	}
 }
 
+query Set(State)::isStateContained(state : State) : Boolean {
+	var stateName = state.name;
+	return self->exists(setState | setState.name = stateName);
+}
 
 helper Set(Automaton)::mergeAutomata() : Automaton {
+	var mergedAutomaton := object Automaton{};
+	
+	var uniqueStates : Set(State) := Set{};
+	self->forEach(automaton | true) {
+		automaton.state->forEach(state | not uniqueStates->isStateContained(state)) {
+			var uniqueState := object State {
+				name := state.name;
+			};
+			log("Add unique state " + uniqueState.name);
+			uniqueStates += uniqueState;
+		};
+		mergedAutomaton.initialstate := automaton.initialstate;
+	};
+	
+	var uniqueTransitions : Set(Transition) := Set{};
+	self->forEach(automaton | true) {
+		automaton.transition->forEach(transition | not uniqueTransitions->containsTransition(transition)) {
+			var uniqueTransition := object Transition{};
+			uniqueTransition.operation := createOperation(transition.operation.name);
+			uniqueTransition.outmessage := createOutMessages(transition.outmessage);
+			uniqueTransition._return := createReturn(transition._return.value);
+			uniqueTransition.prestate := uniqueStates->findState(transition.prestate.name);
+			uniqueTransition.poststate := uniqueStates->findState(transition.poststate.name);
+			log("Add unique transition " + uniqueTransition.prestate.name + " -> " + uniqueTransition.poststate.name + "(" + uniqueTransition.operation.name + ")");
+			uniqueTransitions += uniqueTransition; // uniqueTransition.automaton assigned automatically
+		};
+	};
+	
+	uniqueStates->forEach(uniqueState | true) {
+		var reassignedIncomingTransitions : Set(Transition) := Set{};
+		uniqueState.incomingtransition->forEach(transition | true) {
+			reassignedIncomingTransitions += uniqueTransitions->findTransition(transition.prestate, transition.poststate);
+		};
+		uniqueState.incomingtransition := reassignedIncomingTransitions;
+		
+		var reassignedOutgoingTransitions : Set(Transition) := Set{};
+		uniqueState.outgoingtransition->forEach(transition | true) {
+			reassignedOutgoingTransitions += uniqueTransitions->findTransition(transition.prestate, transition.poststate);
+		};
+		uniqueState.outgoingtransition := reassignedOutgoingTransitions;
+	};
+	
+	mergedAutomaton.state := uniqueStates;
+	mergedAutomaton.transition := uniqueTransitions;
+	var startState := self->asSequence()->first().oclAsType(Automaton).initialstate;
+	mergedAutomaton.initialstate := mergedAutomaton.state->findState(startState.name);
+	return mergedAutomaton;
+}
+
+/*helper Set(Automaton)::mergeAutomata(sender : String) : Automaton {
 	var resultAutomaton := object Automaton {};
 	
 	//eliminate duplicates
@@ -41,9 +118,9 @@ helper Set(Automaton)::mergeAutomata() : Automaton {
 	resultAutomaton.initialstate := resultAutomaton.state-> findState(self->asSequence()->first().initialstate.name);	
 	resultAutomaton.transition := duplicateFreeTransitions;
 	return resultAutomaton;
-}
+}*/
 
-
+/*
 helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Transition)) {
 	
 	log("Adjust transitions for state: " + state.name);
@@ -61,7 +138,7 @@ helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Trans
 	};
 	state.outgoingtransition := adjustedOutgoingTransitions;	
 }
-
+*/
 query Set(Transition)::findTransition(prestate: State, poststate: State) : Transition {
 	self->forEach(transition | transition.prestate.name = prestate.name and transition.poststate.name = poststate.name) {
 		return transition;
@@ -77,7 +154,7 @@ query Set(Transition)::findTransition(prestate: State, poststate: State) : Trans
 	log("!!!!!fatal error: Transition in findTransition(mergeAutomaton.qvto) not found: " + prename + "->" + postname);
 	return null;
 }
-
+/*
 helper eliminateDuplicateTransitions(allAutomata: Set(Automaton), duplicateFreeStates:Set(State)) : Set(Transition) {
 	var transitions : Set(Transition);
 	
@@ -100,7 +177,7 @@ query createTransition(transition: Transition, states: Set(State)) : Transition 
 	}
 	
 	
-}
+}*/
 query Set(State)::findState(stateName: String) : State {
 	self->forEach(state | state.name = stateName) {
 		return state;
@@ -108,7 +185,7 @@ query Set(State)::findState(stateName: String) : State {
 	log("!!!!!fatal error: state in findState(mergeAutomaton.qvto) not found: " + stateName);
 	return null;
 }
-
+/*
 query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 	self->forEach(t) {
 		if(	t.operation.name != transition.operation.name or 
@@ -130,9 +207,39 @@ query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 		return true;	
 	};
 	return false;
+}*/
+
+query Set(Transition)::containsTransition(transition : Transition) : Boolean {
+	var outMessages := transition.outmessage;
+	self->forEach(setTransition 
+					| setTransition.operation.name = transition.operation.name
+					and setTransition.prestate.name = transition.prestate.name
+					and setTransition.poststate.name = transition.poststate.name) {
+		// operation, pre and post equal
+		// now check the outMessages
+		if(not (outMessages->size() = setTransition.outmessage->size())) {
+			return false;
+		};
+		var outProduct := outMessages->product(setTransition.outmessage);
+		var equalCount := 0;
+		outProduct->forEach(outProdTuple | true) {
+			var first := outProdTuple.first;
+			var second := outProdTuple.second;
+			if (first.operation.name = second.operation.name
+					and first._object.name = second._object.name
+					and first._return.value = second._return.value) {
+				equalCount := equalCount + 1;
+			}
+		};
+		if(equalCount = outMessages->size()) {
+			return true;
+		}
+	};
+	return false;
 }
 
 
+/*
 query Set(OutMessage)::containsOutMessage(outMessage: OutMessage) : Boolean {
 	self->forEach(message) {
 		if(	message._return.value = outMessage._return.value and
@@ -160,6 +267,8 @@ helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
 	
 	return stateDict->values()->asSet();
 }
+
+*/
 
 query createOutMessages(outMessage: Set(OutMessage)) : Set(OutMessage) {
 	var resultMessages: Set(OutMessage);
