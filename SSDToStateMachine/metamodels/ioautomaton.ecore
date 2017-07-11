@@ -24,6 +24,8 @@
         eType="#//Return"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="outmessage" upperBound="-1"
         eType="#//OutMessage" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="prestate" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="poststate" eType="#//State"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OutMessage">
     <eStructuralFeatures xsi:type="ecore:EReference" name="_return" eType="#//Return"/>
