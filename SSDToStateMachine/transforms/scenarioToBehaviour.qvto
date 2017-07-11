@@ -12,6 +12,7 @@ main() {
 mapping Scenario::scenarioToBehaviourContainer() : BehaviourContainer {
 	init {
 		doneActors := Set {};
+	}
 		var systemObjects := scenarios->objectsOfType(SystemObject)->asSet()->flatten();
 	
 		systemObjects->forEach(systemObject) {
@@ -22,14 +23,13 @@ mapping Scenario::scenarioToBehaviourContainer() : BehaviourContainer {
 				
 				behaviour.block := communicationsForSysObject->map communicationsToBlocks(systemObject);
 				result.behaviour += behaviour;
+				log("#Behaviours until now: " + result.behaviour->size().toString());
 				doneActors += systemObject.name;
 				
 				
 			};
 		};
-		
-		
-	}
+
 	
 }
 

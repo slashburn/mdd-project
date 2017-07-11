@@ -1,24 +1,35 @@
 modeltype BehaviourModel uses "mm:behaviour";
-modeltype IOAutomatonModel uses "mm::ioautomaton";
+modeltype IOAutomatonModel uses "mm:ioautomaton";
 
 transformation behaviourToAutomaton(in behaviours: BehaviourModel, out automations: IOAutomatonModel);
 property stateDict : Dict(String, ioautomaton::State);
 
 
 main() {
+	log("Behaviour to io automaton transformation starts");
+	log("#Behaviour container: " + behaviours.objectsOfType(BehaviourContainer)->size().toString());
+	
 	behaviours.objectsOfType(BehaviourContainer)->map behaviourContainerToAutomatonContainer();
 }
 
 mapping BehaviourContainer::behaviourContainerToAutomatonContainer() : AutomatonContainer {
+	log("#Behaviours: " + self.behaviour->size().toString());
+	
 	result.automaton := self.behaviour->map behaviourToAutomaton();
 }
 
 mapping Behaviour::behaviourToAutomaton() : Automaton {
+	
+	log("Mapping behaviour of sender " + self.sender);
+	
 	result.sender := self.sender;
 	result.initialstate := createState(result, self.block->first().prestate.name);
 	result.transition := self.block->map blockToTransition(result);
 }
 mapping Block::blockToTransition(inout automaton: Automaton) : Transition {
+	
+	log("Mapping block to transition - prestate: " + self.prestate.name + " poststate: " + self.poststate.name);
+	
 	result.prestate := createState(automaton, self.prestate.name);
 	result.poststate := createState(automaton, self.poststate.name);
 	result.operation := createOperation(self.inmessage.operation.name);
@@ -38,12 +49,19 @@ mapping behaviourRoot::OutMessage::outMessagesConverter() : ioautomaton::OutMess
 
 helper createState(inout automaton: Automaton, stateName: String) : ioautomaton::State {
 
+	log("State " + stateName + "is required");
+	
 	//check if state already exists
 	if(stateDict->hasKey(stateName)) {
+		
+		log("State has already been created");
+	
 		return stateDict->get(stateName);
 	};
 	
 	//if state doesn't exist yet, create it
+	log("State will be created");
+	
 	var state :=  object ioautomaton::State {
 		name := stateName
 	};
