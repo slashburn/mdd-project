@@ -3,9 +3,9 @@ modeltype ScenarioModel uses "mm:sequencediagram";
 
 
 transformation scenarioToBehaviour(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
-property doneActors : Set(String);
 
 main() {
+	log("\n\nTransformation Scenario -> Behaviour");
 	scenarios.objectsOfType(ScenarioContainer)->map scenarioContainerToBehaviourContainer();
 }
 
@@ -22,7 +22,6 @@ mapping Scenario::scenarioToBehaviours() : Set(Behaviour) {
 	init {
 	
 		log("Mapping scenario to behaviours");
-		doneActors := Set {};
 	
 		var communications := self.allSubobjectsOfKind(Communication);
 		
@@ -40,32 +39,38 @@ mapping Scenario::scenarioToBehaviours() : Set(Behaviour) {
 		var systemObjects : Set(SystemObject);
 		systemmessages->forEach(sysmsg) {
 			if (sysmsg._object.oclIsTypeOf(SystemObject)) {
-				systemObjects += sysmsg._object.oclAsType(SystemObject);
+				var sysobj := sysmsg._object.oclAsType(SystemObject);
+				if (not systemObjects->containsSystemObjectWithName(sysobj.name)) {
+					systemObjects += sysobj;
+				}
 			};
-			systemObjects += sysmsg.systemobject;
+			if (not systemObjects->containsSystemObjectWithName(sysmsg.systemobject.name)) {
+					systemObjects += sysmsg.systemobject;
+			};
 		};
 		usermessages->forEach(usermsg) {
 			if (usermsg._object.oclIsTypeOf(SystemObject)) {
-				systemObjects += usermsg._object.oclAsType(SystemObject);
+				var sysobj := usermsg._object.oclAsType(SystemObject);
+				if (not systemObjects->containsSystemObjectWithName(sysobj.name)) {
+					systemObjects += sysobj;
+				}
 			};
 		};
 		
 		log("#SystemObjects: " + systemObjects->size().toString());
 		
 		systemObjects->forEach(systemObject) {
-			if(not doneActors->exists(actor | actor = systemObject.name)) {
-				log("SystemObject: "+ systemObject.name);
-				var behaviour:= self.createBehaviour(systemObject.name);
-				var communicationsForSysObject := self.communication->getCommunicationsForSystemObject(systemObject);
+			
+			log("SystemObject: "+ systemObject.name);
+			var behaviour:= self.createBehaviour(systemObject.name);
+			var communicationsForSysObject := self.communication->getCommunicationsForSystemObject(systemObject);
 				
-				behaviour.block := communicationsForSysObject->map communicationsToBlocks(systemObject);
-				result += behaviour;
-				log("#Behaviours until now: " + result->size().toString());
-				doneActors += systemObject.name;
+			behaviour.block := communicationsForSysObject->map communicationsToBlocks(systemObject);
+			result += behaviour;
+			log("#Behaviours until now: " + result->size().toString());				
 				
-				
-			};
 		};
+
 
 	}
 }
@@ -207,4 +212,13 @@ query createBlock(systemCommunication: SystemCommunication) : Block {
 	}
 }
 
+query Set(SystemObject)::containsSystemObjectWithName(sysObjName : String) : Boolean {
+	
+	self->forEach(sysobj) {
+		if (sysobj.name = sysObjName) {
+			return true;
+		}
+	};
+	return false;
+}
 

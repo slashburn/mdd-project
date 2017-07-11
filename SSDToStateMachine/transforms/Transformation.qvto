@@ -21,9 +21,9 @@ main() {
 	var scenario2Behaviour := new scenarioToBehaviour(scenarios, behaviours);
 	var behaviour2Automaton := new behaviourToAutomaton(behaviours, statemachine);
 	
-	log ("start transformation");
+	log ("**start transformation**");
 	uml2Scenario.transform();
 	scenario2Behaviour.transform();
 	behaviour2Automaton.transform();
-	log("finished");
+	log("\n\n**finished**");
 }

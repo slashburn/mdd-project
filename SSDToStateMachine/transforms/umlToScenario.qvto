@@ -6,6 +6,7 @@ transformation umlToScenario(in ssd: UML, out scenarios: ScenarioModel) ;
 property actorStateDict : Dict(String, String);
 
 main() {
+	log("\n\nTransformation UML -> Scenario");
 	ssd.objectsOfType(Model)->map modelToScenarioContainer();
 }
 

@@ -6,7 +6,7 @@ property stateDict : Dict(String, ioautomaton::State);
 
 
 main() {
-	log("Behaviour to io automaton transformation starts");
+	log("\n\nTransformation Behaviour -> IOAutomaton");
 	log("#Behaviour container: " + behaviours.objectsOfType(BehaviourContainer)->size().toString());
 	
 	behaviours.objectsOfType(BehaviourContainer)->map behaviourContainerToAutomatonContainer();
