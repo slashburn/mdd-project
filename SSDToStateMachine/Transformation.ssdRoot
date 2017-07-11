@@ -1,72 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ioautomaton="http://ioautomaton.ecore" xsi:schemaLocation="http://ioautomaton.ecore metamodels/ioautomaton.ecore">
-  <ioautomaton:AutomatonContainer>
-    <automaton sender="atm" initialstate="/0/@automaton.0/@state.0">
-      <state name="WaitCard"/>
-      <state name="WaitPassword"/>
-      <state name="WaitTakeCard"/>
-      <transition operation="/1" _return="/2" prestate="/0/@automaton.0/@state.0" poststate="/0/@automaton.0/@state.1"/>
-      <transition operation="/3" _return="/4" prestate="/0/@automaton.0/@state.1" poststate="/0/@automaton.0/@state.2">
-        <outmessage _return="/7" _object="/6" operation="/5"/>
-      </transition>
-      <transition operation="/8" _return="/9" prestate="/0/@automaton.0/@state.2" poststate="/0/@automaton.0/@state.0"/>
-    </automaton>
-    <automaton sender="consortium" initialstate="/0/@automaton.1/@state.0">
-      <state name="WaitVerify"/>
-      <transition operation="/10" _return="/11" prestate="/0/@automaton.1/@state.0" poststate="/0/@automaton.1/@state.0">
-        <outmessage _return="/14" _object="/13" operation="/12"/>
-      </transition>
-    </automaton>
-    <automaton sender="bank" initialstate="/0/@automaton.2/@state.0">
-      <state name="WaitBankVerify"/>
-      <transition operation="/15" _return="/16" prestate="/0/@automaton.2/@state.0" poststate="/0/@automaton.2/@state.0"/>
-    </automaton>
-    <automaton sender="bank" initialstate="/0/@automaton.2/@state.0">
-      <transition operation="/17" _return="/18" prestate="/0/@automaton.2/@state.0" poststate="/0/@automaton.2/@state.0"/>
-    </automaton>
-    <automaton sender="atm" initialstate="/0/@automaton.0/@state.1">
-      <transition operation="/19" _return="/20" prestate="/0/@automaton.0/@state.1" poststate="/0/@automaton.0/@state.1">
-        <outmessage _return="/23" _object="/22" operation="/21"/>
-      </transition>
-      <transition operation="/24" _return="/25" prestate="/0/@automaton.0/@state.1" poststate="/0/@automaton.0/@state.2"/>
-      <transition operation="/26" _return="/27" prestate="/0/@automaton.0/@state.2" poststate="/0/@automaton.0/@state.0"/>
-    </automaton>
-    <automaton sender="consortium" initialstate="/0/@automaton.1/@state.0">
-      <transition operation="/28" _return="/29" prestate="/0/@automaton.1/@state.0" poststate="/0/@automaton.1/@state.0">
-        <outmessage _return="/32" _object="/31" operation="/30"/>
-      </transition>
-    </automaton>
-  </ioautomaton:AutomatonContainer>
+  <ioautomaton:Automaton>
+    <state name="WaitBankVerify" outgoingtransition="/0/@transition.0" incomingtransition="/0/@transition.0"/>
+    <transition operation="/1" _return="/2" prestate="/0/@state.0" poststate="/0/@state.0"/>
+  </ioautomaton:Automaton>
+  <ioautomaton:Operation name="verifyCardWithBank"/>
+  <ioautomaton:Return value="void"/>
+  <ioautomaton:Automaton>
+    <state name="WaitVerify" outgoingtransition="/3/@transition.0" incomingtransition="/3/@transition.0"/>
+    <transition operation="/4" _return="/8" prestate="/3/@state.0" poststate="/3/@state.0">
+      <outmessage _return="/7" _object="/6" operation="/5"/>
+    </transition>
+  </ioautomaton:Automaton>
+  <ioautomaton:Operation name="verifyAccount"/>
+  <ioautomaton:Operation name="verifyCardWithBank"/>
+  <ioautomaton:Object name="consortium"/>
+  <ioautomaton:Return/>
+  <ioautomaton:Return value="void"/>
+  <ioautomaton:Automaton>
+    <state name="WaitTakeCard" outgoingtransition="/9/@transition.4" incomingtransition="/9/@transition.1"/>
+    <state name="WaitPassword" outgoingtransition="/9/@transition.0 /9/@transition.1" incomingtransition="/9/@transition.0 /9/@transition.2"/>
+    <state name="WaitCard" outgoingtransition="/9/@transition.2" incomingtransition="/9/@transition.4"/>
+    <transition operation="/19" _return="/23" prestate="/9/@state.1" poststate="/9/@state.1">
+      <outmessage _return="/22" _object="/21" operation="/20"/>
+    </transition>
+    <transition operation="/12" _return="/16" prestate="/9/@state.1" poststate="/9/@state.0">
+      <outmessage _return="/15" _object="/14" operation="/13"/>
+    </transition>
+    <transition operation="/10" _return="/11" prestate="/9/@state.2" poststate="/9/@state.1"/>
+    <transition operation="/24" _return="/25"/>
+    <transition operation="/17" _return="/18" prestate="/9/@state.0" poststate="/9/@state.2"/>
+  </ioautomaton:Automaton>
   <ioautomaton:Operation name="insertCard"/>
   <ioautomaton:Return value="void"/>
   <ioautomaton:Operation name="enterPassword"/>
-  <ioautomaton:Return value="void"/>
   <ioautomaton:Operation name="verifyAccount"/>
   <ioautomaton:Object name="atm"/>
   <ioautomaton:Return/>
+  <ioautomaton:Return value="void"/>
   <ioautomaton:Operation name="takeCard"/>
-  <ioautomaton:Return value="void"/>
-  <ioautomaton:Operation name="verifyAccount"/>
-  <ioautomaton:Return value="void"/>
-  <ioautomaton:Operation name="verifyCardWithBank"/>
-  <ioautomaton:Object name="consortium"/>
-  <ioautomaton:Return/>
-  <ioautomaton:Operation name="verifyCardWithBank"/>
-  <ioautomaton:Return value="void"/>
-  <ioautomaton:Operation name="verifyCardWithBank"/>
   <ioautomaton:Return value="void"/>
   <ioautomaton:Operation name="enterPassword"/>
-  <ioautomaton:Return value="void"/>
   <ioautomaton:Operation name="verifyAccount"/>
   <ioautomaton:Object name="atm"/>
   <ioautomaton:Return/>
+  <ioautomaton:Return value="void"/>
   <ioautomaton:Operation name="cancel"/>
   <ioautomaton:Return value="void"/>
-  <ioautomaton:Operation name="takeCard"/>
-  <ioautomaton:Return value="void"/>
-  <ioautomaton:Operation name="verifyAccount"/>
-  <ioautomaton:Return value="void"/>
-  <ioautomaton:Operation name="verifyCardWithBank"/>
-  <ioautomaton:Object name="consortium"/>
-  <ioautomaton:Return/>
+  <ioautomaton:AutomatonContainer/>
 </xmi:XMI>

@@ -1,6 +1,6 @@
 modeltype IOAutomatonModel uses "mm:ioautomaton";
 
-transformation behaviourToAutomaton(in automata: IOAutomatonModel, out mergedAutomaton: IOAutomatonModel);
+transformation mergeAutomatons(in automata: IOAutomatonModel, out mergedAutomaton: IOAutomatonModel);
 
 main() {
 	log("\n\nTransformation Automata -> Automaton");
@@ -8,6 +8,8 @@ main() {
 }
 
 mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
+	
+	
 	self.automaton.sender->asSet()->forEach(sender) {
 		log("Mapping automaton for " + sender);
 		
@@ -85,7 +87,7 @@ query Set(State)::findState(stateName: String) : State {
 	self->forEach(state | state.name = stateName) {
 		return state;
 	};
-	log("!!!!!fatal error: state in findState(mergeAutomaton.qvto) not found");
+	log("!!!!!fatal error: state in findState(mergeAutomaton.qvto) not found: " + stateName);
 	return null;
 }
 query Set(Transition)::containsTransition(transition: Transition) : Boolean {
@@ -129,7 +131,7 @@ helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
 	var stateDict : Dict(String, State);
 	
 	allAutomata->forEach(automaton) {
-		automaton.state->forEach(state) {
+		automaton.state->forEach(state | not stateDict->hasKey(state.name)) {
 			stateDict->put(state.name, state);
 		}
 	};
