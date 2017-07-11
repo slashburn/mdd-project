@@ -1,9 +1,69 @@
 modeltype BehaviourModel uses "mm:behaviour";
 modeltype IOAutomatonModel uses "mm::ioautomaton";
 
-transformation behaviourToAutomaton(in behaviours: BehaviourModel, out automations: IOAutomatonModel) ;
+transformation behaviourToAutomaton(in behaviours: BehaviourModel, out automations: IOAutomatonModel);
+property stateDict : Dict(String, ioautomaton::State);
+
 
 main() {
-
+	behaviours.objectsOfType(BehaviourContainer)->map behaviourContainerToAutomatonContainer();
 }
 
+mapping BehaviourContainer::behaviourContainerToAutomatonContainer() : AutomatonContainer {
+	result.automaton := self.behaviour->map behaviourToAutomaton();
+}
+
+mapping Behaviour::behaviourToAutomaton() : Automaton {
+	result.sender := self.sender;
+	result.initialstate := createState(result, self.block->first().prestate.name);
+	result.transition := self.block->map blockToTransition(result);
+}
+mapping Block::blockToTransition(inout automaton: Automaton) : Transition {
+	result.prestate := createState(automaton, self.prestate.name);
+	result.poststate := createState(automaton, self.poststate.name);
+	result.operation := createOperation(self.inmessage.operation.name);
+	
+	result._return := createReturn(self.activation._return.value);
+	result.outmessage := self.activation.outmessage->map outMessagesConverter();
+}
+
+mapping behaviourRoot::OutMessage::outMessagesConverter() : ioautomaton::OutMessage {
+	operation := createOperation(self.operation.name);
+	//create receiver
+	_object := createObject(self._object.name);
+	
+	_return := createReturn(self._return.value);
+	
+}
+
+helper createState(inout automaton: Automaton, stateName: String) : ioautomaton::State {
+
+	//check if state already exists
+	if(stateDict->hasKey(stateName)) {
+		return stateDict->get(stateName);
+	};
+	
+	//if state doesn't exist yet, create it
+	var state :=  object ioautomaton::State {
+		name := stateName
+	};
+	stateDict->put(stateName, state);
+	automaton.state += state;
+	return state;
+}
+
+query createOperation(operationName: String): ioautomaton::Operation {
+	return object ioautomaton::Operation {
+		name := operationName
+	}
+}
+query createReturn(returnValue: String): ioautomaton::Return {
+	return object ioautomaton::Return {
+		value := returnValue
+	}
+}
+query createObject(objectName: String): ioautomaton::Object {
+	return object ioautomaton::Object {
+		name := objectName
+	}
+}
