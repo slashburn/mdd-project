@@ -16,6 +16,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="State">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingtransition" upperBound="-1"
+        eType="#//Transition" eOpposite="#//Transition/prestate"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingtransition" upperBound="-1"
+        eType="#//Transition" eOpposite="#//Transition/poststate"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Transition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="operation" lowerBound="1"
@@ -24,8 +28,10 @@
         eType="#//Return"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="outmessage" upperBound="-1"
         eType="#//OutMessage" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="prestate" eType="#//State"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="poststate" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="prestate" eType="#//State"
+        eOpposite="#//State/outgoingtransition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="poststate" eType="#//State"
+        eOpposite="#//State/incomingtransition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OutMessage">
     <eStructuralFeatures xsi:type="ecore:EReference" name="_return" eType="#//Return"/>
