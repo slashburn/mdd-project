@@ -9,6 +9,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="region" lowerBound="1"
         upperBound="-1" eType="#//Region" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="submachineState" upperBound="-1"
+        eType="ecore:EClass ../../model-transformer/model/05_StateMachine/StateMachine.ecore#//State"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Transition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
@@ -42,9 +44,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="deferrableTrigger" upperBound="-1"
         eType="#//Trigger" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FinalState" eSuperTypes="#//State">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nameF" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FinalState" eSuperTypes="#//State"/>
   <eClassifiers xsi:type="ecore:EClass" name="PseudoState" eSuperTypes="#//Vertex">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="Value" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
@@ -62,4 +62,5 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="constraint" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Behavior"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InitialState" eSuperTypes="#//State"/>
 </ecore:EPackage>

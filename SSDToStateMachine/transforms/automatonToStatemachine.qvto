@@ -16,17 +16,312 @@ mapping AutomatonContainer::automatonContainerToStatemachineContainer() : Statem
 	result.statemachine := self.automaton->map automatonToStatemachine();
 }
 
-mapping Automaton::automatonToStatemachine() : Statemachine {
+
+mapping ioautomaton::Automaton::automatonToStatemachine() : statemachine::Statemachine {
 	log("\nMapping behaviour of sender " + self.sender);
+	name := "No name in IOAutomaton TBD";
 	
-	result.name := "test";
-	result.region := null;
+
 	
-	//result.sender := self.sender;
-	//result.initialstate := createState(result, self.block->first().prestate.name);
-	//result.transition := self.block->map blockToTransition(result);
+	var functionNames := self.getFunctionNames(); //all functions
+	var mainRegion = self.map toRegion();//Region of this Actor StateMachine
+	region += mainRegion; 
+	
+	 //for each function generate a Submachine
+	submachineState += functionNames.generateSubmachines(self, mainRegion)->asSequence();
+
+
 }
 
+helper ioautomaton::Automaton::getFunctionNames() : Set(String) {//getAllFunctions
+	return self.transition->select(operation != null)->collectNested(operation.name)->asSet();
+}
+
+mapping Automaton::toRegion() : statemachine::Region {
+	name := "No name in IOAutomaton TBD";
+
+	subvertex += self.state.map toState();
+	subvertex += self.initialstate.map toInitialState();
+	
+	transition += self.transition.map toTransition();
+	
+}
+
+//Generating out of the States Vertexes in the abstacter Modell
+mapping ioautomaton::State::stateToVertex() : statemachine::Vertex {
+	name := self.name;
+}
+
+//Taking over the States
+mapping ioautomaton::State::toState() : statemachine::Vertex {
+	name := self.name;
+}
+mapping ioautomaton::State::toInitialState() : statemachine::Vertex {
+	name := "entry";
+}
+
+//TBD just Initial state has been done by other project
+//Mapping the transitionm
+mapping ioautomaton::Transition::toTransition() : statemachine::Transition {
+	source := self.prestate.map stateToVertex();
+	target := self.poststate.map stateToVertex();
+}
+
+
+
+
+
+helper String::generateSubmachines(in iOAutomaton : ioautomaton::Automaton, inout mainReg : statemachine::Region ) : statemachine::Statemachine{
+	var subMach := self.map stringToStateMachine();
+	var reg := self.map stringToRegion();
+	subMach.region := reg;
+	
+	/// Etry State
+	var initState = self.map constructEntryState();	
+	reg.subvertex += initState;
+	
+	//State for mainRegion, where this function is called define now
+	var submachineState := self.map constructState();
+	submachineState.entryPoint := initState;
+	
+	///Transitions from IOAutomaton used in this submachine
+	var relatedTransitions := iOAutomaton.transition->select(inmessage != null)->select(inmessage.operation.name=self)->asSequence();
+	var first := constructNextStepOfAlgorithm(relatedTransitions,1,reg, mainReg,submachineState); //first Actual state in this Submachine
+	
+	//transition to this state
+	var trans := map constructTransition(initState,first);
+	reg.transition += trans;
+	
+	//State for mainRegion, where this function is called
+	submachineState.submachine := subMach;
+	mainReg.subvertex += submachineState;
+	
+	//connect inside main region
+	var sourceStateName := relatedTransitions.source->first().oclAsType(State).name; //all calling states are the same
+	var sourceState := mainReg.subvertex->selectByKind(StateMachine::State).oclAsType(StateMachine::State)->select(name=sourceStateName); //can't be pseudo' 
+	var inTrans = map constructTransition(sourceState->first(),submachineState);//first save, as only one possible
+	inTrans.trigger := self.map constructTrigger();
+	mainReg.transition += inTrans;
+	
+	return subMach;
+}
+
+mapping String::stringToStateMachine() : statemachine::Statemachine{
+	name := self;
+}
+
+mapping String::stringToRegion() : statemachine::Region{
+	name := self;
+}
+
+helper constructNextStepOfAlgorithm(in corrTransitions : Sequence(IOAutomaton::Transition),
+		in count : Integer, inout reg : StateMachine::Region, inout mainReg : StateMachine::Region, inout submachineState: StateMachine::State) : StateMachine::Vertex{
+	
+	var oMessages := corrTransitions->first().outmessage->asSequence(); //All transitions related to this function
+	var doActivityCode := ""; //build statename
+	var i := count; //location in message
+	
+	//collect all messages without return type
+	while(oMessages->at(i).returnvalue.oclIsKindOf(VoidValue) and i <= oMessages->size()){
+		doActivityCode := doActivityCode + oMessages->at(i).getOutMessageSignature();
+		i := i + 1;
+	};
+	
+	//with returntype add call to statename
+	if( oMessages->at(i).returnvalue.oclIsKindOf(Value) and i <= oMessages->size() ){
+		doActivityCode := doActivityCode + oMessages->at(i).getOutMessageSignature();
+	};
+	
+	//construct states
+	var state := doActivityCode.map constructActionState(submachineState.name);
+	
+	if(i != count){	
+		reg.subvertex += state;		
+	};
+	var b = false;
+	//if return value create branch and connect to state, if this happens we don't have final states yet
+	if( oMessages->at(i).returnvalue.oclIsKindOf(Value) and i <= oMessages->size() ){
+		reg.subvertex += state;
+		var results = corrTransitions.getResultsAt(i)->asSet(); //all different results
+		results->forEach(res){
+			//split by result and call this step again
+			var resultingTransactions :=  corrTransitions->select(outmessage->at(i).returnvalue.oclAsType(Value).name = res);
+			if(i+1<=resultingTransactions->first().outmessage->asSequence()->size()){
+				var next := constructNextStepOfAlgorithm(resultingTransactions,i+1,reg, mainReg,submachineState);
+				//conect this state to the result state
+				var condition := "check = " + res;
+				var trans := condition.map constructGuardedTransition(state,next);
+				reg.transition += trans;
+			};
+			if(not (i+1<=resultingTransactions->first().outmessage->asSequence()->size())){
+				//Final state is next
+				var exitState := resultingTransactions.target.oclAsType(State).name.map constructExitState(submachineState.name,(resultingTransactions->first().returnvalue.map toEffect()).desc);
+				reg.subvertex += exitState;
+				var condition := "check = " + res;
+				//reg.transition += map constructTransition(state,exitState->first()); //save there is only one
+				log("verify",submachineState.name);
+				//Connect Inside Main
+				var targetStateName := resultingTransactions.target->first().oclAsType(State).name; //all calling states are the same
+				var targetState := mainReg.subvertex->selectByKind(StateMachine::State).oclAsType(StateMachine::State)->select(name=targetStateName); //can't be pseudo' 
+				var effect := resultingTransactions->first().returnvalue.map toEffect();
+				var outTrans = map constructTransition(submachineState,targetState->first(),effect);//first save, as only one possible
+
+				//targetState->first().exitPoint += exitState;
+				submachineState.exitPoint += exitState;
+				
+				mainReg.transition += outTrans;
+				//conect this state to the result state
+				
+				var trans := condition.map constructGuardedTransition(state,exitState->first());
+				reg.transition += trans;
+				b:=true;
+			};
+		};
+	};
+
+	//should never occur, as this is loop condition, but to do a complete case for Kind
+	if(oMessages->at(i).returnvalue.oclIsKindOf(VoidValue) and i <= oMessages->size()){
+		log("ERROR","should never be called");
+	};
+	if(not((i != count) or (oMessages->at(i).returnvalue.oclIsKindOf(Value) and i <= oMessages->size()))){
+		reg.subvertex +=  state;
+	};
+	if(b){
+		return state;
+	};
+	
+	//add state to vertex, in this case we have one and only one final state
+	if(i != count or not (oMessages->at(i).returnvalue.oclIsKindOf(Value) and i <= oMessages->size()) ){
+		var exitState := corrTransitions.target.oclAsType(State).name.map constructExitState(submachineState.name,(corrTransitions->first().returnvalue.map toEffect()).desc);
+		reg.subvertex += exitState;
+		reg.transition += map constructTransition(state,exitState->first()); //save there is only one
+		
+		//Connect Inside Main
+		var targetStateName := corrTransitions.target->first().oclAsType(State).name; //all calling states are the same
+		var targetState := mainReg.subvertex->selectByKind(StateMachine::State).oclAsType(StateMachine::State)->select(name=targetStateName); //can't be pseudo' 
+		var effect := corrTransitions->first().returnvalue.map toEffect();
+		var outTrans = map constructTransition(submachineState,targetState->first(),effect);//first save, as only one possible
+		
+		//targetState->first().exitPoint += exitState;
+		submachineState.exitPoint += exitState;
+		
+		mainReg.transition += outTrans;
+	};
+	
+	
+	return state;
+}
+
+
+mapping  String::constructGuardedTransition(in sou : StateMachine::Vertex, in tar : StateMachine::Vertex) : StateMachine::Transition{
+	guard := self.map constructConstraint();
+	source := sou;
+	target := tar;
+}
+
+mapping  constructTransition(in sou : StateMachine::Vertex, in tar : StateMachine::Vertex) : StateMachine::Transition{
+	source := sou;
+	target := tar;
+}
+
+mapping  constructTransition(in sou : StateMachine::State, in tar : StateMachine::State, in eff : StateMachine::Behavior) : StateMachine::Transition{
+	source := sou;
+	target := tar;
+	effect := eff;
+}
+
+mapping  constructTransition(in sou : StateMachine::Vertex, in tar : StateMachine::Vertex, in eff : String) : StateMachine::Transition{
+	source := sou;
+	target := tar;
+	name := eff;
+}
+
+mapping  String::constructConstraint() : StateMachine::Constraint{
+	constraint := self;
+}
+
+
+helper IOAutomaton::Transition::getResultsAt(in i:Integer) : String {
+	return self.outmessage->at(i).returnvalue.oclAsType(Value).name;
+}
+
+mapping String::constructTrigger() : StateMachine::Trigger{
+	trigger := self;
+}
+
+helper IOAutomaton::OutMessage::getOutMessageSignature() : String {
+//TODO check only if return value
+	var ret := "";
+	if(self.returnvalue.oclIsKindOf(Value)){
+		ret := " check := ";
+	};
+	return ret+getRecieverName(self.actorobject)+"."+self.operation.name+" ";
+}
+mapping String::constructActionState(in subMachName : String) :  StateMachine::State{
+	name := subMachName+":"+self;
+	doActivity := self.map constructCodeBlock();
+}
+
+
+
+mapping String::constructCodeBlock() : StateMachine::CodeBlock{
+	desc := self;
+}
+
+helper getRecieverName(in act : IOAutomaton::ActorObject) : String {
+	if(act.oclIsKindOf(User))
+		return "User";
+	return act.oclAsType(SystemObject).name;
+}
+
+
+
+mapping String::constructInitState() : StateMachine::PseudoState {
+	name := self;
+	pseudoStateKind := PseudoStateKind::initial;
+}
+
+mapping String::constructEntryState() : StateMachine::PseudoState {
+	name := self;
+	pseudoStateKind := PseudoStateKind::entryPoint;
+}
+
+mapping String::constructExitState(in submachineName: String, in retVal : String) : StateMachine::PseudoState {
+	name := submachineName+":"+self;
+	pseudoStateKind := PseudoStateKind::exitPoint;
+	returnValue := retVal;
+}
+
+
+	          
+
+	          	          
+mapping IOAutomaton::InitialState::toInitialState() : StateMachine::PseudoState {
+	name := "entry";
+	pseudoStateKind := PseudoStateKind::initial;
+}
+
+
+mapping String::constructState() : statemachine::State {
+	name := self;
+}
+
+mapping IOAutomaton::InMessage::toAcivityState() : StateMachine::State{
+	name := self.operation.name;
+}
+
+mapping IOAutomaton::ReturnValue::toEffect() : StateMachine::CodeBlock 
+	disjuncts 
+		 IOAutomaton::Value::toEffect,
+		IOAutomaton::VoidValue::toEffect;
+	
+
+mapping IOAutomaton::Value::toEffect() : StateMachine::CodeBlock {
+	desc := "return " + self.name;
+}
+mapping IOAutomaton::VoidValue::toEffect() : StateMachine::CodeBlock{
+	desc := "return void";
+} 
 
 
 
