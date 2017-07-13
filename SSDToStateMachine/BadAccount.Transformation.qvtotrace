@@ -1,0 +1,1039 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trace:Trace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:trace="http:///www.eclipse.org/m2m/qvt/operational/trace.ecore">
+  <traceRecords>
+    <mappingOperation name="modelToScenarioContainer" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Model">
+        <value>
+          <modelElement href="models/atm.uml#_8lZ_MBwEEeW-4Jk5ioTelA"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="ScenarioContainer">
+        <value>
+          <modelElement href="extent:/32#/0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="interactionToScenario" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Interaction">
+        <value>
+          <modelElement href="models/atm.uml#_8nCW4BwEEeW-4Jk5ioTelA"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Scenario">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_zAVY4B2lEeWtNPFhwbQgKQ"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_-S-KwB2lEeWtNPFhwbQgKQ"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_DuqXYB2mEeWtNPFhwbQgKQ"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_cjYOMB2mEeWtNPFhwbQgKQ"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_xvg0wB2mEeWtNPFhwbQgKQ"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.4"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="interactionToScenario" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Interaction">
+        <value>
+          <modelElement href="models/atm.uml#_PWg4cB9gEeWOfN7QRRMe6A"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Scenario">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_yfiDACBEEeWOENsLCXvgCw"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_PEvI4CBFEeWOENsLCXvgCw"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_Yjlo8CBFEeWOENsLCXvgCw"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_U2KfgCBGEeWOENsLCXvgCw"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="messageToSystemCommunication" package="umlToScenario" module="umlToScenario"/>
+    <context>
+      <context name="self" type="Message">
+        <value>
+          <modelElement href="models/atm.uml#_2Wv6QCBGEeWOENsLCXvgCw"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.4"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="scenarioContainerToBehaviourContainer" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="ScenarioContainer">
+        <value>
+          <modelElement href="extent:/32#/0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="BehaviourContainer">
+        <value>
+          <modelElement href="extent:/33#/0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="systemCommunicationToOutMessage" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/14/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="communicationsToBlocks" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="OrderedSet(Communication)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.0"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.1"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.2"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.4"/>
+          </collection>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters name="systemObject" type="SystemObject">
+        <value>
+          <modelElement href="extent:/32#/23"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="OrderedSet(Block)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.1/@block.0"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.1/@block.1"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.1/@block.2"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="systemCommunicationToOutMessage" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0/@communication.3"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/34/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="communicationsToBlocks" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="OrderedSet(Communication)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.2"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.3"/>
+          </collection>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters name="systemObject" type="SystemObject">
+        <value>
+          <modelElement href="extent:/32#/25"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="OrderedSet(Block)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.2/@block.0"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="communicationsToBlocks" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="OrderedSet(Communication)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.0/@communication.3"/>
+          </collection>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters name="systemObject" type="SystemObject">
+        <value>
+          <modelElement href="extent:/32#/33"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="OrderedSet(Block)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.0/@block.0"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="scenarioToBehaviours" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="Scenario">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Set(Behaviour)">
+        <value collectionType="Set">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.0"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.1"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.2"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="systemCommunicationToOutMessage" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/55/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="communicationsToBlocks" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="OrderedSet(Communication)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.0"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.1"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.3"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.4"/>
+          </collection>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters name="systemObject" type="SystemObject">
+        <value>
+          <modelElement href="extent:/32#/61"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="OrderedSet(Block)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.3/@block.0"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.3/@block.1"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.3/@block.2"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="communicationsToBlocks" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="OrderedSet(Communication)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.2"/>
+          </collection>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters name="systemObject" type="SystemObject">
+        <value>
+          <modelElement href="extent:/32#/77"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="OrderedSet(Block)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.5/@block.0"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="systemCommunicationToOutMessage" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="SystemCommunication">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1/@communication.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/90/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="communicationsToBlocks" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="OrderedSet(Communication)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.1"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/32#/0/@scenario.1/@communication.2"/>
+          </collection>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters name="systemObject" type="SystemObject">
+        <value>
+          <modelElement href="extent:/32#/75"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="OrderedSet(Block)">
+        <value collectionType="OrderedSet">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.4/@block.0"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="scenarioToBehaviours" package="scenarioToBehaviour" module="scenarioToBehaviour"/>
+    <context>
+      <context name="self" type="Scenario">
+        <value>
+          <modelElement href="extent:/32#/0/@scenario.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Set(Behaviour)">
+        <value collectionType="Set">
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.3"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.4"/>
+          </collection>
+          <collection>
+            <modelElement href="extent:/33#/0/@behaviour.5"/>
+          </collection>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourContainerToAutomatonContainer" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="BehaviourContainer">
+        <value>
+          <modelElement href="extent:/33#/0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="AutomatonContainer">
+        <value>
+          <modelElement href="extent:/34#/0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourToAutomaton" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Behaviour">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.0/@block.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.0"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.0/@transition.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourToAutomaton" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Behaviour">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.1/@block.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1/@transition.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.1/@block.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1/@transition.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="outMessagesConverter" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/14/@outmessage.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1/@transition.1/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.1/@block.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.1/@transition.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourToAutomaton" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Behaviour">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.2/@block.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.2"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.2/@transition.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="outMessagesConverter" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/34/@outmessage.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.2/@transition.0/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourToAutomaton" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Behaviour">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.3"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.3/@block.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3/@transition.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="outMessagesConverter" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/55/@outmessage.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3/@transition.0/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.3/@block.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3/@transition.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.3/@block.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.3/@transition.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourToAutomaton" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Behaviour">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.4"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.4"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.4/@block.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.4"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.4/@transition.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="outMessagesConverter" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="OutMessage">
+        <value>
+          <modelElement href="extent:/33#/90/@outmessage.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="OutMessage">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.4/@transition.0/@outmessage.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="behaviourToAutomaton" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Behaviour">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.5"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.5"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="blockToTransition" package="behaviourToAutomaton" module="behaviourToAutomaton"/>
+    <context>
+      <context name="self" type="Block">
+        <value>
+          <modelElement href="extent:/33#/0/@behaviour.5/@block.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters>
+      <parameters kind="INOUT" name="automaton" type="Automaton">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.5"/>
+        </value>
+      </parameters>
+    </parameters>
+    <result>
+      <result kind="OUT" name="result" type="Transition">
+        <value>
+          <modelElement href="extent:/34#/0/@automaton.5/@transition.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="mergeAutomatons" package="mergeAutomatons" module="mergeAutomatons"/>
+    <context>
+      <context name="self" type="AutomatonContainer">
+        <value>
+          <modelElement href="extent:/34#/0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="AutomatonContainer">
+        <value>
+          <modelElement href="BadAccount.ssdRoot#/0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+</trace:Trace>
