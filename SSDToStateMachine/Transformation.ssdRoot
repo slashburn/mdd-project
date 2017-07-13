@@ -1,2 +1,275 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"/>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
+  <uml:Model/>
+  <uml:Model name="Generated state machine from sequence diagrams">
+    <packagedElement xsi:type="uml:StateMachine" name="UML State Machine for bank">
+      <region name="Main region from state machine for bank">
+        <subvertex xsi:type="uml:State">
+          <name xsi:nil="true"/>
+        </subvertex>
+      </region>
+    </packagedElement>
+    <packagedElement xsi:type="uml:StateMachine" name="UML State Machine for consortium">
+      <region name="Main region from state machine for consortium">
+        <transition name="WaitVerify -> badBankPassword" source="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/WaitVerify" target="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/:%20badBankPassword">
+          <trigger name="badBankPassword"/>
+        </transition>
+        <transition name="badBankPassword -> WaitVerify" source="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/:%20badBankPassword" target="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/WaitVerify">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition name="WaitVerify -> badBankAccount" source="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/WaitVerify" target="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/:%20badBankAccount">
+          <trigger name="badBankAccount"/>
+        </transition>
+        <transition name="badBankAccount -> WaitVerify" source="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/:%20badBankAccount" target="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/WaitVerify">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <subvertex xsi:type="uml:State" name="WaitVerify"/>
+        <subvertex xsi:type="uml:State" name=": badBankAccount" submachine="/2"/>
+        <subvertex xsi:type="uml:State" name=": badBankPassword" submachine="/4"/>
+      </region>
+    </packagedElement>
+    <packagedElement xsi:type="uml:StateMachine" name="UML State Machine for atm">
+      <region name="Main region from state machine for atm">
+        <transition name="WaitPassword -> badAccount" source="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/WaitPassword" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20badAccount">
+          <trigger name="badAccount"/>
+        </transition>
+        <transition name="WaitPassword -> badPassword" source="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/WaitPassword" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20badPassword">
+          <trigger name="badPassword"/>
+        </transition>
+        <transition name="badPassword -> WaitPassword" source="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20badPassword" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/WaitPassword">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition name="badAccount -> WaitTakeCard" source="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20badAccount" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/WaitTakeCard">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <subvertex xsi:type="uml:State" name="WaitPassword"/>
+        <subvertex xsi:type="uml:State" name="WaitTakeCard"/>
+        <subvertex xsi:type="uml:State" name=": badAccount" submachine="/6"/>
+        <subvertex xsi:type="uml:State" name=": badPassword" submachine="/8"/>
+      </region>
+    </packagedElement>
+    <packagedElement xsi:type="uml:StateMachine" name="UML State Machine for user">
+      <region name="Main region from state machine for user">
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20printReceipt" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20displayMainScreen" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20ejectCard" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20requestTakeCard" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20requestPassword">
+          <trigger name="requestPassword"/>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20canceledMessage" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20requestPassword" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20requestPassword" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <transition source="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20badAccountMessage" target="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/@subvertex.0">
+          <effect xsi:type="uml:OpaqueBehavior" name="return void">
+            <body>return void</body>
+            <language>en</language>
+          </effect>
+        </transition>
+        <subvertex xsi:type="uml:State">
+          <name xsi:nil="true"/>
+        </subvertex>
+        <subvertex xsi:type="uml:State" name=": requestPassword" submachine="/10"/>
+        <subvertex xsi:type="uml:State" name=": canceledMessage"/>
+        <subvertex xsi:type="uml:State" name=": badAccountMessage"/>
+        <subvertex xsi:type="uml:State" name=": printReceipt"/>
+        <subvertex xsi:type="uml:State" name=": displayMainScreen"/>
+        <subvertex xsi:type="uml:State" name=": requestTakeCard" submachine="/17"/>
+        <subvertex xsi:type="uml:State" name=": ejectCard"/>
+      </region>
+    </packagedElement>
+  </uml:Model>
+  <uml:StateMachine name=": badBankAccount" submachineState="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/:%20badBankAccount">
+    <region name="Main region of statemachine from activity state : badBankAccount">
+      <transition name="entry->consortium.badAccount" source="/2/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badBankAccount/@subvertex.0" target="/2/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badBankAccount/consortium.badAccount"/>
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+      <subvertex xsi:type="uml:State" name="consortium.badAccount">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := consortium.badAccount">
+          <body>check := consortium.badAccount</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+    </region>
+  </uml:StateMachine>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := consortium.badAccount">
+      <body>check := consortium.badAccount</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:StateMachine name=": badBankPassword" submachineState="/1/UML%20State%20Machine%20for%20consortium/Main%20region%20from%20state%20machine%20for%20consortium/:%20badBankPassword">
+    <region name="Main region of statemachine from activity state : badBankPassword">
+      <transition name="entry->consortium.badPassword" source="/4/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badBankPassword/@subvertex.0" target="/4/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badBankPassword/consortium.badPassword"/>
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+      <subvertex xsi:type="uml:State" name="consortium.badPassword">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := consortium.badPassword">
+          <body>check := consortium.badPassword</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+    </region>
+  </uml:StateMachine>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := consortium.badPassword">
+      <body>check := consortium.badPassword</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:StateMachine name=": badAccount" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20badAccount">
+    <region name="Main region of statemachine from activity state : badAccount">
+      <transition name="entry->atm.requestTakeCard" source="/6/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badAccount/@subvertex.0" target="/6/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badAccount/atm.requestTakeCard"/>
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+      <subvertex xsi:type="uml:State" name="atm.requestTakeCard">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := atm.requestTakeCard">
+          <body>check := atm.requestTakeCard</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+    </region>
+  </uml:StateMachine>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := atm.requestTakeCard">
+      <body>check := atm.requestTakeCard</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:StateMachine name=": badPassword" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20badPassword">
+    <region name="Main region of statemachine from activity state : badPassword">
+      <transition name="entry->atm.canceledMessage" source="/8/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badPassword/@subvertex.0" target="/8/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20badPassword/atm.canceledMessage"/>
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+      <subvertex xsi:type="uml:State" name="atm.canceledMessage">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := atm.canceledMessage">
+          <body>check := atm.canceledMessage</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+    </region>
+  </uml:StateMachine>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := atm.canceledMessage">
+      <body>check := atm.canceledMessage</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:StateMachine name=": requestPassword" submachineState="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20requestPassword">
+    <region name="Main region of statemachine from activity state : requestPassword">
+      <transition name="entry->user.cancel" source="/10/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20requestPassword/@subvertex.0" target="/10/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20requestPassword/user.cancel"/>
+      <transition name="entry->user.enterPassword" source="/10/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20requestPassword/@subvertex.0" target="/10/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20requestPassword/user.enterPassword"/>
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+      <subvertex xsi:type="uml:State" name="user.cancel">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.cancel">
+          <body>check := user.cancel</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+      <subvertex xsi:type="uml:State" name="user.enterPassword">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.enterPassword">
+          <body>check := user.enterPassword</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+    </region>
+  </uml:StateMachine>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.cancel">
+      <body>check := user.cancel</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.enterPassword">
+      <body>check := user.enterPassword</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:StateMachine name=": canceledMessage">
+    <region name="Main region of statemachine from activity state : canceledMessage">
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+    </region>
+  </uml:StateMachine>
+  <uml:StateMachine name=": badAccountMessage">
+    <region name="Main region of statemachine from activity state : badAccountMessage">
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+    </region>
+  </uml:StateMachine>
+  <uml:StateMachine name=": printReceipt">
+    <region name="Main region of statemachine from activity state : printReceipt">
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+    </region>
+  </uml:StateMachine>
+  <uml:StateMachine name=": displayMainScreen">
+    <region name="Main region of statemachine from activity state : displayMainScreen">
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+    </region>
+  </uml:StateMachine>
+  <uml:StateMachine name=": requestTakeCard" submachineState="/1/UML%20State%20Machine%20for%20user/Main%20region%20from%20state%20machine%20for%20user/:%20requestTakeCard">
+    <region name="Main region of statemachine from activity state : requestTakeCard">
+      <transition name="entry->user.takeCard" source="/17/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20requestTakeCard/@subvertex.0" target="/17/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20requestTakeCard/user.takeCard"/>
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+      <subvertex xsi:type="uml:State" name="user.takeCard">
+        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.takeCard">
+          <body>check := user.takeCard</body>
+          <language>en</language>
+        </doActivity>
+      </subvertex>
+    </region>
+  </uml:StateMachine>
+  <uml:State name="check = void">
+    <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.takeCard">
+      <body>check := user.takeCard</body>
+      <language>en</language>
+    </doActivity>
+  </uml:State>
+  <uml:StateMachine name=": ejectCard">
+    <region name="Main region of statemachine from activity state : ejectCard">
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+    </region>
+  </uml:StateMachine>
+</xmi:XMI>

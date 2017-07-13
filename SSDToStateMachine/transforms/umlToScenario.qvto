@@ -41,13 +41,10 @@ mapping Interaction::interactionToScenario() : Scenario {
 			var mos = interactionFragment.oclAsType(MessageOccurrenceSpecification);
 			if (mos.isSend()){
 				if (mos.message.messageSort = MessageSort::synchCall) {
-					if (mos.message.receiveEvent.isUser()) {
-						communication +=  mos.message.map messageToUserCommunication();
-					}	
-					else {
-						communication +=  mos.message.map messageToSystemCommunication();
-					}
-				}
+					communication +=  mos.message.map messageToUserCommunication();	
+				} else {
+					communication +=  mos.message.map messageToSystemCommunication();
+				}			
 			}
 			else {
 				
