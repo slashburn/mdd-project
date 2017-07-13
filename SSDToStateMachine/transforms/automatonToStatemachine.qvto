@@ -1,61 +1,79 @@
-//modeltype StatemachineModel uses "mm:statemachine";
+modeltype UML uses "http://www.eclipse.org/uml2/5.0.0/UML";
 modeltype IOAutomatonModel uses "mm:ioautomaton";
-//
-//
+
 transformation automatonToStatemachine(in automata: IOAutomatonModel, out statemachines: IOAutomatonModel);
-//
-//main() {
-//	log("\n\nTransformation IOAutomatonModel -> Statemachine");
-//	log("#Automaton container: " + automata.objectsOfType(AutomatonContainer)->size().toString());
-//	automata.objectsOfType(AutomatonContainer)->map automatonContainerToStatemachineContainer();	
-//}
-//
-//mapping AutomatonContainer::automatonContainerToStatemachineContainer() : StatemachineContainer {
-//	log("#Automatons: " + self.automaton->size().toString());
-//	
-//	result.statemachine := self.automaton->map automatonToStatemachine();
-//}
-//
-//
-//mapping ioautomaton::Automaton::automatonToStatemachine() : statemachine::Statemachine {
-//	log("\nMapping behaviour of sender " + self.sender);
-//	name := "No name in IOAutomaton TBD";
-//	
-//
-//	
-//	var functionNames := self.getFunctionNames(); //all functions
-//	var mainRegion = self.map toRegion();//Region of this Actor StateMachine
-//	region += mainRegion; 
-//	
-//	 //for each function generate a Submachine
-//	submachineState += functionNames.generateSubmachines(self, mainRegion)->asSequence();
-//
-//
-//}
-//
+
+main() {
+	log("\n\nTransformation IOAutomatonModel -> Statemachine");
+	log("#Automaton container: " + automata.objectsOfType(AutomatonContainer)->size().toString());
+	automata.objectsOfType(AutomatonContainer)->map automatonContainerToStatemachineContainer();	
+}
+
+mapping AutomatonContainer::automatonContainerToStatemachineContainer() : UML::Model {
+	log("#Automatons: " + self.automaton->size().toString());
+	
+	var statemachine := createUMLModel();
+	
+	statemachine.packagedElement += self.automaton->map automatonToStatemachine();
+}
+
+query createUMLModel() : UML::Model {
+	return object UML::Model {
+		name := "Generated state machine from sequence diagrams";
+	};
+}
+
+
+mapping Automaton::automatonToStatemachine() : UML::StateMachine {
+	log("\nMapping behaviour of sender " + self.sender);
+	
+	//set name of uml state machine 
+	name := "UML State Machine for " + self.sender;
+	
+	
+	//var functionNames := self.getFunctionNames(); //all functions
+	var mainRegion = createRegion(self);//Region of this Actor StateMachine
+	region += mainRegion; 
+	
+	 //for each function generate a Submachine
+	submachineState += functionNames.generateSubmachines(self, mainRegion)->asSequence();
+
+
+}
+
+query createRegion(automaton: Automaton) : UML::Region {
+	var mainRegion := object UML::Region {
+		name := "Main region from state machine for " + automaton.sender;
+	};
+	
+	mainRegion.subvertex += automaton.state.map createUMLState();
+	mainRegion.subvertex += automaton.initialstate.map toInitialState();
+	
+	mainRegion.transition += automaton.transition.map toTransition();
+	
+	return mainRegion;
+}
+
+mapping ioautomaton::State::createUMLState() : UML::State {
+	
+	init {	
+		result := object UML::State {
+			name := self.name;
+		};
+	}
+}
+
 //helper ioautomaton::Automaton::getFunctionNames() : Set(String) {//getAllFunctions
 //	return self.transition->select(operation != null)->collectNested(operation.name)->asSet();
 //}
 //
-//mapping Automaton::toRegion() : statemachine::Region {
-//	name := "No name in IOAutomaton TBD";
-//
-//	subvertex += self.state.map toState();
-//	subvertex += self.initialstate.map toInitialState();
-//	
-//	transition += self.transition.map toTransition();
-//	
-//}
 //
 ////Generating out of the States Vertexes in the abstacter Modell
 //mapping ioautomaton::State::stateToVertex() : statemachine::Vertex {
 //	name := self.name;
 //}
 //
-////Taking over the States
-//mapping ioautomaton::State::toState() : statemachine::Vertex {
-//	name := self.name;
-//}
+
 //mapping ioautomaton::State::toInitialState() : statemachine::Vertex {
 //	name := "entry";
 //}

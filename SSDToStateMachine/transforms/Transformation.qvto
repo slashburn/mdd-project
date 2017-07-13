@@ -1,7 +1,7 @@
 import umlToScenario;
 import scenarioToBehaviour;
 import behaviourToAutomaton;
-import mergeAutomatons;
+import mergeAutomata;
 //import automatonToStatemachine;
 
 modeltype UML uses  "http://www.eclipse.org/uml2/5.0.0/UML";
@@ -14,7 +14,7 @@ transformation Transformation (in sequence : UML, out statemachine : IOAutomaton
 	access transformation umlToScenario(in UML, out ScenarioModel)
 	access transformation scenarioToBehaviour(in ScenarioModel, out BehaviourModel)
 	access transformation behaviourToAutomaton(in BehaviourModel, out IOAutomatonModel)
-	access transformation mergeAutomatons(in IOAutomatonModel, out IOAutomatonModel);
+	access transformation mergeAutomata(in IOAutomatonModel, out IOAutomatonModel);
 	//access transformation automatonToStatemachine(in IOAutomatonModel, out StatemachineModel);
 
 main() {
@@ -27,7 +27,7 @@ main() {
 	var uml2Scenario := new umlToScenario(sequence, scenarios);
 	var scenario2Behaviour := new scenarioToBehaviour(scenarios, behaviours);
 	var behaviour2Automaton := new behaviourToAutomaton(behaviours, automata);
-	var mergedAutomaton := new mergeAutomatons(automata, statemachine);
+	var mergedAutomaton := new mergeAutomata(automata, statemachine);
 	//var automaton2Statemachine := new automatonToStatemachine(automata2, statemachine);
 	
 	log ("**start transformation**");

@@ -1,14 +1,14 @@
 modeltype IOAutomatonModel uses "mm:ioautomaton";
 
-transformation mergeAutomatons(in automata: IOAutomatonModel, out mergedAutomaton: IOAutomatonModel);
+transformation mergeAutomata(in automata: IOAutomatonModel, out mergedAutomaton: IOAutomatonModel);
 
 main() {
 	log("\n\nTransformation Automata -> Automaton");
 	var automatonContainer := automata.objectsOfType(AutomatonContainer);
-	automatonContainer->map mergeAutomatons();	
+	automatonContainer->map mergeAutomata();	
 }
 
-mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
+mapping AutomatonContainer::mergeAutomata() : AutomatonContainer {
 		
 	self.automaton.sender->asSet()->forEach(sender) {
 		log("Mapping automaton for " + sender);
@@ -51,29 +51,46 @@ helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Trans
 	
 	var adjustedIncomingTransitions : Set(Transition);
 	state.incomingtransition->forEach(transition) {
-		adjustedIncomingTransitions += duplicateFreeTransitions->findTransition(transition.prestate, transition.poststate);
+		adjustedIncomingTransitions += duplicateFreeTransitions->findTransition(transition);
 	};
 	state.incomingtransition := adjustedIncomingTransitions;
 	
 	
 	var adjustedOutgoingTransitions : Set(Transition);
 	state.outgoingtransition->forEach(transition) {
-		adjustedOutgoingTransitions += duplicateFreeTransitions->findTransition(transition.prestate, transition.poststate);
+		adjustedOutgoingTransitions += duplicateFreeTransitions->findTransition(transition);
 	};
 	state.outgoingtransition := adjustedOutgoingTransitions;	
 }
 
-query Set(Transition)::findTransition(prestate: State, poststate: State) : Transition {
-	self->forEach(transition | transition.prestate.name = prestate.name and transition.poststate.name = poststate.name) {
+query Set(Transition)::findTransition(t: Transition) : Transition {
+	
+	self->forEach(transition ) {
+		if(	t.operation.name != transition.operation.name or 
+			t.prestate.name != transition.prestate.name or
+		 	t.poststate.name != transition.poststate.name or
+		 	t.outmessage->size() != transition.outmessage->size()) {
+		 	
+		 	continue;
+		};
+		
+		var transitionsSetsNotEqual := false;
+		t.outmessage->forEach(outMsg | not transition.outmessage->containsOutMessage(outMsg)){
+			transitionsSetsNotEqual := true;
+			break;
+		};
+		if(transitionsSetsNotEqual) {
+			continue;
+		};	
 		return transition;
 	};
 	var postname := "null";
-	if (poststate != null) {
-		postname := poststate.name;
+	if (t.poststate != null) {
+		postname := t.poststate.name;
 	};
 	var prename := "null";
-	if (prestate != null) {
-		prename := prestate.name;
+	if (t.prestate != null) {
+		prename := t.prestate.name;
 	};
 	log("!!!!!fatal error: Transition in findTransition(mergeAutomaton.qvto) not found: " + prename + "->" + postname);
 	return null;
