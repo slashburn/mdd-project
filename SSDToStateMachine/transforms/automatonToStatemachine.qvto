@@ -1,0 +1,33 @@
+modeltype StatemachineModel uses "mm:statemachine";
+modeltype IOAutomatonModel uses "mm:ioautomaton";
+
+
+transformation automatonToStatemachine(in automata: IOAutomatonModel, out statemachines: StatemachineModel);
+
+main() {
+	log("\n\nTransformation IOAutomatonModel -> Statemachine");
+	log("#Automaton container: " + automata.objectsOfType(AutomatonContainer)->size().toString());
+	automata.objectsOfType(AutomatonContainer)->map automatonContainerToStatemachineContainer();	
+}
+
+mapping AutomatonContainer::automatonContainerToStatemachineContainer() : StatemachineContainer {
+	log("#Automatons: " + self.automaton->size().toString());
+	
+	result.statemachine := self.automaton->map automatonToStatemachine();
+}
+
+mapping Automaton::automatonToStatemachine() : Statemachine {
+	log("\nMapping behaviour of sender " + self.sender);
+	
+	result.name := "test";
+	result.region := null;
+	
+	//result.sender := self.sender;
+	//result.initialstate := createState(result, self.block->first().prestate.name);
+	//result.transition := self.block->map blockToTransition(result);
+}
+
+
+
+
+
