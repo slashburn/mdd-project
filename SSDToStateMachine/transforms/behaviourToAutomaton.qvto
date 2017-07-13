@@ -9,7 +9,8 @@ main() {
 	log("\n\nTransformation Behaviour -> IOAutomaton");
 	log("#Behaviour container: " + behaviours.objectsOfType(BehaviourContainer)->size().toString());
 	
-	behaviours.objectsOfType(BehaviourContainer)->map behaviourContainerToAutomatonContainer();
+	var behaviourcontainer := behaviours.objectsOfType(BehaviourContainer);
+	behaviourcontainer->map behaviourContainerToAutomatonContainer();
 }
 
 mapping BehaviourContainer::behaviourContainerToAutomatonContainer() : AutomatonContainer {

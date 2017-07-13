@@ -1,16 +1,17 @@
 modeltype UML uses "http://www.eclipse.org/uml2/5.0.0/UML";
 modeltype IOAutomatonModel uses "mm:ioautomaton";
 
-transformation automatonToStatemachine(in automata: IOAutomatonModel, out statemachines: IOAutomatonModel);
+transformation automatonToStatemachine(in automata: IOAutomatonModel, out statemachines: UML);
 
 main() {
 	log("\n\nTransformation IOAutomatonModel -> Statemachine");
 	log("#Automaton container: " + automata.objectsOfType(AutomatonContainer)->size().toString());
-	automata.objectsOfType(AutomatonContainer)->map automatonContainerToStatemachineContainer();	
+	var automatacontainer := automata.objectsOfType(AutomatonContainer);
+	automatacontainer->map automatonContainerToStatemachineContainer();	
 }
 
 mapping AutomatonContainer::automatonContainerToStatemachineContainer() : UML::Model {
-	log("#Automatons: " + self.automaton->size().toString());
+	log("#Automata: " + self.automaton->size().toString());
 	
 	var statemachine := createUMLModel();
 	
@@ -25,70 +26,234 @@ query createUMLModel() : UML::Model {
 
 
 mapping Automaton::automatonToStatemachine() : UML::StateMachine {
-	log("\nMapping behaviour of sender " + self.sender);
+	log("\nMapping automaton of sender " + self.sender);
 	
-	//set name of uml state machine 
 	name := "UML State Machine for " + self.sender;
-	
-	
-	//var functionNames := self.getFunctionNames(); //all functions
-	var mainRegion = createRegion(self);//Region of this Actor StateMachine
+		
+	var mainRegion = createRegion(self);
 	region += mainRegion; 
-	
-	 //for each function generate a Submachine
-	submachineState += functionNames.generateSubmachines(self, mainRegion)->asSequence();
-
 
 }
 
 query createRegion(automaton: Automaton) : UML::Region {
-	var mainRegion := object UML::Region {
+	
+	var region := object UML::Region {
 		name := "Main region from state machine for " + automaton.sender;
 	};
 	
-	mainRegion.subvertex += automaton.state.map createUMLState();
-	mainRegion.subvertex += automaton.initialstate.map toInitialState();
+	region.subvertex += automaton.state.map createUMLStableState();
 	
-	mainRegion.transition += automaton.transition.map toTransition();
+	var activityStates := automaton.map createUMLActivityState();
+	region.subvertex += activityStates;	
+	region.transition += automaton.createTransitions(region.subvertex);
 	
-	return mainRegion;
+	activityStates->forEach(state) {
+		state.submachine := state.createSubmachine(automaton.transition);
+	};
+	
+	return region;
 }
 
-mapping ioautomaton::State::createUMLState() : UML::State {
+query Automaton::createTransitions(states: Set(UML::Vertex)) : Set(UML::Transition) {
+	
+	var resultSet : Set(UML::Transition);
+	
+	//save the already added transitions, adding them once is sufficient
+	var addedTransitions: Set(String);
+		
+	self.transition->forEach(transition) {
+		
+		if (not addedTransitions->exists(t | t = transition.prestate.name + " -> " + transition.operation.name)) {
+			
+			var  ingoingumltransition := object UML::Transition {
+				name := transition.prestate.name + " -> " + transition.operation.name;
+				addedTransitions += name;
+				source := states->findVertexWithName(transition.prestate.name);
+				target := states->findVertexWithName(": " + transition.operation.name);
+				trigger := object UML::Trigger {
+					name := transition.operation.name;
+				};
+				log("Transition added: " + name + " with trigger " + transition.operation.name);
+			};
+			
+			resultSet += ingoingumltransition;
+		};
+		
+		var  outgoingumltransition := object UML::Transition {
+			name := transition.operation.name + " -> " + transition.poststate.name;
+			source := states->findVertexWithName(": " + transition.operation.name);
+			target := states->findVertexWithName(transition.poststate.name);
+			effect := object OpaqueBehavior {
+				name := "return " + transition._return.value;
+				body := "return " + transition._return.value;
+				language := "en";
+			};
+			
+			log("Transition added: " + name + " with return value " + transition._return.value);
+		};
+			
+		resultSet += outgoingumltransition;
+	};
+	
+	
+	return resultSet;
+	
+}
+
+query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) : UML::StateMachine {
+	
+	var statemachine := object  UML::StateMachine {
+		name := self.name;
+	};
+	
+	var region = object UML::Region { 
+		name := "Main region of statemachine from activity state " + self.name; 
+	};
+	statemachine.region += region;
+	
+	var entry := object UML::Pseudostate {
+		kind := UML::PseudostateKind::entryPoint;
+	};
+	
+	region.subvertex += entry;
+	
+	var transitionsWithCorrectOperationName := transitions->select(t | t.operation.name = self.name.substituteFirst(": ", ""));
+	log("For operation " + self.name.substituteFirst(": ", "") + ", " + transitionsWithCorrectOperationName->size().toString() + " relevant tranistions were found");
+	
+	var allReceiverNames : Set(String);
+	var receiverOperationDict : Dict(String, Set(String));
+	transitionsWithCorrectOperationName->forEach(t) {
+		
+		if (t.outmessage->size() = 0) {
+			continue;
+		};
+		
+		var receiver := t.outmessage->first()._object.name;			
+		if (not allReceiverNames->exists(s | s = receiver)) {
+			allReceiverNames += receiver;
+			receiverOperationDict->put(receiver, object Set(String){});
+			log("Receiver name " + receiver + " added");
+		} else {
+			log("Receiver already added");
+		};
+		if (not receiverOperationDict->get(receiver)->exists(s | s = t.outmessage->first().operation.name)) {
+			var recSet := receiverOperationDict->get(receiver);
+			recSet += t.outmessage->first().operation.name;
+			receiverOperationDict->put(receiver, recSet);
+			
+			var opname : String;			
+			if (t.outmessage->first().operation = null) {
+				opname := "null";
+			} else {
+				opname := t.outmessage->first().operation.name;
+			};
+			log("For receiver name " + receiver + " the operation " + opname + " was found");
+		} else {
+			log("Receiver operation combination already added");
+		}		
+	};
+	
+	if (allReceiverNames->size() = 0) {
+		return null;
+	};
+	
+	allReceiverNames->forEach(receiver) {		
+		receiverOperationDict->get(receiver)->forEach(operation) {
+			
+			var relevantTransitions := transitionsWithCorrectOperationName->select(t | t.outmessage->first()._object.name = receiver and t.outmessage->first().operation.name = operation);
+			
+			var opname : String;			
+			if (operation = null) {
+				opname := "null";
+			} else {
+				opname := operation;
+			};
+			log("#relevant transitions for receiver " + receiver + " and operation " + opname + " : " + relevantTransitions->size().toString());
+			
+			var firstState := object UML::State {
+				name := receiver + "." + operation;
+				doActivity := object OpaqueBehavior {
+					name := "check := " + receiver + "." + operation;
+					body := "check := " + receiver + "." + operation;
+					language := "en";
+				}
+			};
+			
+			region.subvertex += firstState;
+			
+			region.transition += object UML::Transition {
+				name := "entry->" + receiver + "." + operation;
+				source := entry;
+				target := firstState;
+			};
+			
+			var possibleReturnValues : Set(String);
+			relevantTransitions->forEach(t) {
+				if (not possibleReturnValues->exists(s | s = t._return.value)) {
+					possibleReturnValues += t._return.value;
+				}
+			};
+			
+			possibleReturnValues->forEach(returnVal) {
+				var state := object UML::State {
+					name := "check = " + returnVal;
+					doActivity := object OpaqueBehavior {
+					name := "check := " + receiver + "." + operation;
+					body := "check := " + receiver + "." + operation;
+					language := "en";
+				}
+				}
+			}
+		}
+	};
+	
+	return statemachine;
+	
+}
+
+query Set(UML::Vertex)::findVertexWithName(name : String) : UML::Vertex {	
+		
+	self->forEach(vertex) {
+		if (vertex.name = name) {
+			return vertex;
+		}
+	};
+	
+	log("!!!!! vertex with name " + name + "not found");
+	return null;
+}
+
+mapping ioautomaton::State::createUMLStableState() : State {
 	
 	init {	
 		result := object UML::State {
 			name := self.name;
+			log("State " + name + " created");
 		};
 	}
 }
 
-//helper ioautomaton::Automaton::getFunctionNames() : Set(String) {//getAllFunctions
-//	return self.transition->select(operation != null)->collectNested(operation.name)->asSet();
-//}
-//
-//
-////Generating out of the States Vertexes in the abstacter Modell
-//mapping ioautomaton::State::stateToVertex() : statemachine::Vertex {
-//	name := self.name;
-//}
-//
+mapping Automaton::createUMLActivityState() : Set(UML::State) {
+	init {	
+		var states: Set(String);
+		
+		self.transition->forEach(transition) {
+			
+			if (not states->exists(s | s = transition.operation.name))	{	
+				result += object UML::State {
+					name := ": " + transition.operation.name;
+					states += transition.operation.name;
+					log("State " + name + " created");
+				};
+			}
+		}
+	}
+	
+	
+}
 
-//mapping ioautomaton::State::toInitialState() : statemachine::Vertex {
-//	name := "entry";
-//}
-//
-////TBD just Initial state has been done by other project
-////Mapping the transitionm
-//mapping ioautomaton::Transition::toTransition() : statemachine::Transition {
-//	source := self.prestate.map stateToVertex();
-//	target := self.poststate.map stateToVertex();
-//}
-//
-//
-//
-//
-//
+
+
 //helper String::generateSubmachines(in iOAutomaton : ioautomaton::Automaton, inout mainReg : statemachine::Region ) : statemachine::Statemachine{
 //	var subMach := self.map stringToStateMachine();
 //	var reg := self.map stringToRegion();
@@ -124,14 +289,7 @@ mapping ioautomaton::State::createUMLState() : UML::State {
 //	return subMach;
 //}
 //
-//mapping String::stringToStateMachine() : statemachine::Statemachine{
-//	name := self;
-//}
-//
-//mapping String::stringToRegion() : statemachine::Region{
-//	name := self;
-//}
-//
+
 //helper constructNextStepOfAlgorithm(in corrTransitions : Sequence(IOAutomaton::Transition),
 //		in count : Integer, inout reg : StateMachine::Region, inout mainReg : StateMachine::Region, inout submachineState: StateMachine::State) : StateMachine::Vertex{
 //	

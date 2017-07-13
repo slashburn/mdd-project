@@ -2,40 +2,39 @@ import umlToScenario;
 import scenarioToBehaviour;
 import behaviourToAutomaton;
 import mergeAutomata;
-//import automatonToStatemachine;
+import automatonToStatemachine;
 
 modeltype UML uses  "http://www.eclipse.org/uml2/5.0.0/UML";
 modeltype ScenarioModel uses "mm:sequencediagram";
 modeltype BehaviourModel uses "mm:behaviour";
 modeltype IOAutomatonModel uses "mm:ioautomaton";
-//modeltype StatemachineModel uses "mm:statemachine";
 
-transformation Transformation (in sequence : UML, out statemachine : IOAutomatonModel)
+transformation Transformation (in sequence : UML, out statemachine : UML)
 	access transformation umlToScenario(in UML, out ScenarioModel)
 	access transformation scenarioToBehaviour(in ScenarioModel, out BehaviourModel)
 	access transformation behaviourToAutomaton(in BehaviourModel, out IOAutomatonModel)
-	access transformation mergeAutomata(in IOAutomatonModel, out IOAutomatonModel);
-	//access transformation automatonToStatemachine(in IOAutomatonModel, out StatemachineModel);
+	access transformation mergeAutomata(in IOAutomatonModel, out IOAutomatonModel)
+	access transformation automatonToStatemachine(in IOAutomatonModel, out UML);
 
 main() {
 
 	var scenarios := ScenarioModel.createEmptyModel().oclAsType(ScenarioModel);
 	var behaviours := ScenarioModel.createEmptyModel().oclAsType(BehaviourModel);
-	var automata := ScenarioModel.createEmptyModel().oclAsType(BehaviourModel);
+	var automata := ScenarioModel.createEmptyModel().oclAsType(IOAutomatonModel);
 	var automata2 := ScenarioModel.createEmptyModel().oclAsType(BehaviourModel);
 	
 	var uml2Scenario := new umlToScenario(sequence, scenarios);
 	var scenario2Behaviour := new scenarioToBehaviour(scenarios, behaviours);
 	var behaviour2Automaton := new behaviourToAutomaton(behaviours, automata);
-	var mergedAutomaton := new mergeAutomata(automata, statemachine);
-	//var automaton2Statemachine := new automatonToStatemachine(automata2, statemachine);
+	var mergedAutomaton := new mergeAutomata(automata, automata2);
+	var automaton2Statemachine := new automatonToStatemachine(automata2, statemachine);
 	
 	log ("**start transformation**");
 	uml2Scenario.transform();
 	scenario2Behaviour.transform();
 	behaviour2Automaton.transform();
 	mergedAutomaton.transform();
-	//automaton2Statemachine.transform();
+	automaton2Statemachine.transform();
 	
 	log("\n\n**finished**");
 }

@@ -6,7 +6,8 @@ transformation scenarioToBehaviour(in scenarios: ScenarioModel, out behaviour: B
 
 main() {
 	log("\n\nTransformation Scenario -> Behaviour");
-	scenarios.objectsOfType(ScenarioContainer)->map scenarioContainerToBehaviourContainer();
+	var scenariocontainer := scenarios.objectsOfType(ScenarioContainer);
+	scenariocontainer->map scenarioContainerToBehaviourContainer();
 }
 
 mapping ScenarioContainer::scenarioContainerToBehaviourContainer() : BehaviourContainer {
