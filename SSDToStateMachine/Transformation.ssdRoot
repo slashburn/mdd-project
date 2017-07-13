@@ -11,18 +11,18 @@
         <outmessage _return="/6" _object="/5" operation="/4"/>
       </transition>
     </automaton>
-    <automaton sender="atm" initialstate="/0/@automaton.2/@state.2">
-      <state name="WaitTakeCard" outgoingtransition="/0/@automaton.2/@transition.3" incomingtransition="/0/@automaton.2/@transition.0"/>
-      <state name="WaitPassword" outgoingtransition="/0/@automaton.2/@transition.0 /0/@automaton.2/@transition.2" incomingtransition="/0/@automaton.2/@transition.1 /0/@automaton.2/@transition.2"/>
-      <state name="WaitCard" outgoingtransition="/0/@automaton.2/@transition.1" incomingtransition="/0/@automaton.2/@transition.3"/>
-      <transition operation="/22" _return="/23" prestate="/0/@automaton.2/@state.1" poststate="/0/@automaton.2/@state.0"/>
-      <transition operation="/8" _return="/9" prestate="/0/@automaton.2/@state.2" poststate="/0/@automaton.2/@state.1"/>
-      <transition operation="/17" _return="/21" prestate="/0/@automaton.2/@state.1" poststate="/0/@automaton.2/@state.1">
-        <outmessage _return="/20" _object="/19" operation="/18"/>
-      </transition>
-      <transition operation="/15" _return="/16" prestate="/0/@automaton.2/@state.0" poststate="/0/@automaton.2/@state.2"/>
+    <automaton sender="atm" initialstate="/0/@automaton.2/@state.0">
+      <state name="WaitCard" outgoingtransition="/0/@automaton.2/@transition.0" incomingtransition="/0/@automaton.2/@transition.2"/>
+      <state name="WaitPassword" outgoingtransition="/0/@automaton.2/@transition.1 /0/@automaton.2/@transition.4" incomingtransition="/0/@automaton.2/@transition.0 /0/@automaton.2/@transition.4"/>
+      <state name="WaitTakeCard" outgoingtransition="/0/@automaton.2/@transition.2" incomingtransition="/0/@automaton.2/@transition.1"/>
+      <transition operation="/8" _return="/9" prestate="/0/@automaton.2/@state.0" poststate="/0/@automaton.2/@state.1"/>
+      <transition operation="/22" _return="/23" prestate="/0/@automaton.2/@state.1" poststate="/0/@automaton.2/@state.2"/>
+      <transition operation="/15" _return="/16" prestate="/0/@automaton.2/@state.2" poststate="/0/@automaton.2/@state.0"/>
       <transition operation="/10" _return="/14">
         <outmessage _return="/13" _object="/12" operation="/11"/>
+      </transition>
+      <transition operation="/17" _return="/21" prestate="/0/@automaton.2/@state.1" poststate="/0/@automaton.2/@state.1">
+        <outmessage _return="/20" _object="/19" operation="/18"/>
       </transition>
     </automaton>
   </ioautomaton:AutomatonContainer>

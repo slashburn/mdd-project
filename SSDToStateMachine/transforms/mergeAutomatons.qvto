@@ -4,7 +4,8 @@ transformation mergeAutomatons(in automata: IOAutomatonModel, out mergedAutomato
 
 main() {
 	log("\n\nTransformation Automata -> Automaton");
-	automata.objectsOfType(AutomatonContainer)->map mergeAutomatons();	
+	var automatonContainer := automata.objectsOfType(AutomatonContainer);
+	automatonContainer->map mergeAutomatons();	
 }
 
 mapping AutomatonContainer::mergeAutomatons() : AutomatonContainer {
