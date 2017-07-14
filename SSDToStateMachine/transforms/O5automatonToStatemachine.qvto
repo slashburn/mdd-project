@@ -1,6 +1,7 @@
 modeltype UML uses "http://www.eclipse.org/uml2/5.0.0/UML";
 modeltype IOAutomatonModel uses "mm:ioautomaton";
 
+//fifth transformation: from merged io automata to the uml state machine
 transformation automatonToStatemachine(in automata: IOAutomatonModel, out statemachines: UML);
 
 main() {
@@ -10,72 +11,109 @@ main() {
 	automatacontainer->map automatonContainerToStatemachineContainer();	
 }
 
+//intermediate class that capsules a state machine together with its entry point and exit points
+intermediate class StatemachineConnection {
+	machine : StateMachine;
+	exitpoints: Set(ExitConnectionReturn);
+	entrypoint: Pseudostate;
+}
+
+//intermediate class that capsules an exit point together with the matching return value and the next state in the io automaton
+intermediate class ExitConnectionReturn {
+	exitpoint : Pseudostate;
+	returnValue : String;
+	nextState: ioautomaton::State;
+}
+
+//map the automaton container to the uml model
 mapping AutomatonContainer::automatonContainerToStatemachineContainer() : UML::Model {
 	
 	init {
 		log("#Automata: " + self.automaton->size().toString());
 		
+		//create an uml model element
 		var statemachine := createUMLModel();
 		
+		//add the state machines for every sender to the packaged elements
 		statemachine.packagedElement += self.automaton->map automatonToStatemachine();
 		
 		result := statemachine;
 	}
 }
 
+//create the uml model element
 query createUMLModel() : UML::Model {
 	return object UML::Model {
 		name := "Generated state machine from sequence diagrams";
 	};
 }
 
-
+//map an automaton to a state machine
 mapping Automaton::automatonToStatemachine() : UML::StateMachine {
+	
 	log("\nMapping automaton of sender " + self.sender);
 	
 	name := "UML State Machine for " + self.sender;
 		
+	//every state machine only has one region, the region is created here
 	var mainRegion = createRegion(self, result);
 	region += mainRegion; 
 
 }
 
+//create a region for an automaton inside a state machine
 query createRegion(automaton: Automaton, inout origin : StateMachine) : UML::Region {
 	
 	//save the already added transitions, adding them once is sufficient
 	var addedTransitions: Set(String);
 	
+	//create the region object
 	var region := object UML::Region {
 		name := "Main region from state machine for " + automaton.sender;
 	};
 	
+	//add the stable states (states that are also io automaton states) to the state machine states
 	region.subvertex += automaton.state.map createUMLStableState();
+	
+	//add an initial state to the state machine
 	var initial := object Pseudostate {
 		kind := UML::PseudostateKind::initial;
 		name := "initial state for state machine " + automaton.sender;
 	};
 	region.subvertex += initial;
 	
+	//add the activity states (states that are the transitions in the io automaton) to the state machine states
 	var activityStates := automaton.map createUMLActivityState();
 	region.subvertex += activityStates;	
 	
+	//create the initial transition for the state machine (initial pseudostate -> first state)
 	region.transition += object Transition {
 		name := "initial transition for state machine " + automaton.sender;
 		source := initial;
 		target := region.subvertex->findVertexWithName(automaton.initialstate.name);
 	};
 	
+	//iterate over every activity state as they need submachines
 	activityStates->forEach(state) {
+		 
+		 //create the submachine, the intermediate class delivers the submachine as well as the entry point and all exit points
 		 var machineWithExits := state.createSubmachine(automaton.transition);
+		 
+		 //set the state's submachine
 		 state.submachine := machineWithExits.machine;
+		 //this is needed that the submachine is displayed in the correct namespace in the .uml file (under the top level state machine 
+		 //and not under the model element)
 		 origin.nestedClassifier += state.submachine;
 		 
+		 //create a connection point reference for the state
 		 var connectionpointreference := object ConnectionPointReference { };
-		 
+		 //iterate over the exitpoints
 		 machineWithExits.exitpoints->forEach(exitpoint) {
 			
+			//add the exitpoint to the connection point reference
 			connectionpointreference.exit += exitpoint.exitpoint;
 			
+			//create a transition between the exitpoint and the next state in the top level state machine
 			var  outgoingumltransition := object UML::Transition {
 				name := state.name + " -> " + exitpoint.nextState.name + " with return " + exitpoint.returnValue;
 				source := exitpoint.exitpoint;
@@ -90,21 +128,26 @@ query createRegion(automaton: Automaton, inout origin : StateMachine) : UML::Reg
 				log("Transition added: " + name);
 			};
 			
-			region.transition += outgoingumltransition;
-			
+			//every transition belongs to a region (namespace issue)
+			region.transition += outgoingumltransition;			
 			
 		};
 		
+		//set the entry point of the connection point reference
 		connectionpointreference.entry += machineWithExits.entrypoint;
 		
+		//add the connection point reference to the uml state
 		state.connection += connectionpointreference;		
 		
 	};
 	
+	//iterate over all automaton transitions
 	automaton.transition->forEach(transition) {
 		
+		//if the transition is already added, we don't have to add it again
 		if (not addedTransitions->exists(t | t = transition.prestate.name + " -> " + transition.operation.name)) {
 			
+			//create a transition between the precious state and the entry point of the activity state
 			var  ingoingumltransition := object UML::Transition {
 				name := transition.prestate.name + " -> " + transition.operation.name;
 				addedTransitions += name;
@@ -116,6 +159,7 @@ query createRegion(automaton: Automaton, inout origin : StateMachine) : UML::Reg
 				log("Transition added: " + name + " with trigger " + transition.operation.name);
 			};
 			
+			//add the transition to the region 
 			region.transition += ingoingumltransition;
 		};
 	};	
@@ -123,34 +167,43 @@ query createRegion(automaton: Automaton, inout origin : StateMachine) : UML::Reg
 	return region;
 }
 
+//create a submachine for an activity state
 query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) : StatemachineConnection {
 	
+	//create the submachine object
 	var statemachine := object  UML::StateMachine {
 		name := self.name;
 	};
 	
+	//and its main region
 	var region = object UML::Region { 
 		name := "Main region of statemachine from activity state " + self.name; 
 	};
+	
 	statemachine.region += region;
 	
+	//create the entry point for the submachine
 	var entry := object UML::Pseudostate {
 		kind := UML::PseudostateKind::entryPoint;
 		name := "entry point for submachine " + self.name;
 	};
-	
+	//and add it to its states
 	region.subvertex += entry;
 	
+	//select all transitions from the io automaton that have the operation name that this state name is
 	var transitionsWithCorrectOperationName := transitions->select(t | t.operation.name = self.name.substituteFirst(": ", ""));
 	log("For operation " + self.name.substituteFirst(": ", "") + ", " + transitionsWithCorrectOperationName->size().toString() + " relevant tranistions were found");
 	
+	//create the state for the out message and save all exit points
 	var exits := self.createStateForOutMessage(transitionsWithCorrectOperationName, region, entry, null, 1);
 	log("#exit points for submachine " + self.name + " : " + exits->size().toString());
 	
+	//add the exit points as states for the submachine
 	exits->forEach(exit) {
 		region.subvertex += exit.exitpoint;
 	};
-		
+	
+	//return the submachine together with entry point and exit points	
 	return object StatemachineConnection {
 		machine := statemachine;
 		exitpoints := exits;
@@ -159,35 +212,29 @@ query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) :
 	
 }
 
-intermediate class StatemachineConnection {
-	machine : StateMachine;
-	exitpoints: Set(ExitConnectionReturn);
-	entrypoint: Pseudostate;
-}
-
-intermediate class ExitConnectionReturn {
-	exitpoint : Pseudostate;
-	returnValue : String;
-	nextState: ioautomaton::State;
-}
-
-helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName : Set(ioautomaton::Transition), inout region : Region, inout previousState : UML::Vertex, previousReturn : String, outMessageIndex : Integer) : Set(ExitConnectionReturn) {
+//create a state from an out message (the message at outmessages[outMessageIndex])
+helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName : Set(ioautomaton::Transition), 
+											inout region : Region, 
+											inout previousState : UML::Vertex, 
+											previousReturn : String, outMessageIndex : Integer) : Set(ExitConnectionReturn) {
 	
 	var allReceiverNames : Set(String);
 	var receiverOperationDict : Dict(String, Set(String));
 	
 	var returnSet : Set(ExitConnectionReturn);
-		
+	
+	//iterate over all relevant transitions	
 	transitionsWithCorrectOperationName->forEach(t) {
 		
 		if (t.outmessage->size() < outMessageIndex) {
-			//final state
+			//this state is a final state for the submachine
 			if (previousState.oclIsTypeOf(Pseudostate)) {
 				log("final state after entry point");
 			} else {
 				log("final state after " + previousState.name);
 			};
 			
+			//create an exit point
 			var exit := object UML::Pseudostate {
 				kind := UML::PseudostateKind::exitPoint;
 				var exitname := "exit point after " + previousState.name;
@@ -197,6 +244,7 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 				name :=  exitname;
 			};
 			
+			//add the exit point to the return set
 			returnSet += object ExitConnectionReturn {
 				exitpoint := exit;
 				if (t._return = null) {
@@ -207,11 +255,13 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 				nextState := t.poststate;
 			};
 			
+			//create a transition from the final state to the exit point
 			region.transition += object UML::Transition {
 				name := previousState.name + " -> exit";
 				source := previousState;
 				target := exit;
 				
+				//maybe there are more exit points depending on the return value - then we need a guard
 				if (previousReturn != null) {
 					guard := object UML::Constraint {
 						name := "[check = " + previousReturn + "]";
@@ -224,9 +274,11 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 				}
 			};
 			
+			//final state - nothing to do any more
 			continue;
 		};
 		
+		//check if the receiver was already added
 		var receiver := t.outmessage->at(outMessageIndex)._object.name;			
 		if (not allReceiverNames->exists(s | s = receiver)) {
 			allReceiverNames += receiver;
@@ -235,6 +287,8 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 		} else {
 			log("Receiver already added");
 		};
+		
+		//add the receiver operation combination to the dictionary
 		if (not receiverOperationDict->get(receiver)->exists(s | s = t.outmessage->at(outMessageIndex).operation.name)) {
 			var recSet := receiverOperationDict->get(receiver);
 			recSet += t.outmessage->at(outMessageIndex).operation.name;
@@ -252,13 +306,18 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 		}		
 	};
 	
+	//no receiver found - nothing to do any more
 	if (allReceiverNames->size() = 0) {
 		return returnSet;
 	};
 	
+	//iterate over all receivers for the next states
 	allReceiverNames->forEach(receiver) {		
+		
+		//iterate over all operations that are called at this receiver
 		receiverOperationDict->get(receiver)->forEach(operation) {
 			
+			//get all transitions with this receiver operation combination
 			var relevantTransitions := transitionsWithCorrectOperationName->select(t | 	t.outmessage->at(outMessageIndex)._object.name = receiver and 
 																						t.outmessage->at(outMessageIndex).operation.name = operation);
 			
@@ -270,6 +329,7 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 			};
 			log("#relevant transitions for receiver " + receiver + " and operation " + opname + " : " + relevantTransitions->size().toString());
 			
+			//create a state that represents receiver.operation
 			var state := object UML::State {
 				name := receiver + "." + operation;
 				doActivity := object OpaqueBehavior {
@@ -283,14 +343,16 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 					language := "en";
 				}
 			};
-			
+			//add it to the regions states
 			region.subvertex += state;
 			
+			//create a transition between the previour state and the created state
 			region.transition += object UML::Transition {
 				name := previousState.name + " -> " + receiver + "." + operation;
 				source := previousState;
 				target := state;
 				
+				//if there was a return value from the previous state, a guard is needed
 				if (previousReturn != null) {
 					guard := object UML::Constraint {
 						name := "[check = " + previousReturn + "]";
@@ -303,23 +365,24 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 				}
 			};
 			
+			//collect all possible return values from receiver.operation
 			var possibleReturnValues : Set(String);
 			relevantTransitions->forEach(t) {
 				if (not possibleReturnValues->exists(s | s = t.outmessage->at(outMessageIndex)._return.value) and not (t.outmessage->at(outMessageIndex)._return.value = "void")) {
 					possibleReturnValues += t.outmessage->at(outMessageIndex)._return.value;
 				}
 			};
-			
-			if (state.name = "consortium.verifyAccount") {
-				log("");
-			};
+
 			
 			if (not possibleReturnValues->isEmpty()) {
+				//more than one return value found -> recursively create the next states (outMessageIndex + 1) with this previous return value 
+				//the relevant transitions have to be adjusted, only the transitions with the given return value are relevant
 				possibleReturnValues->forEach(returnVal) {
 					returnSet += self.createStateForOutMessage(relevantTransitions->select(t | t.outmessage->at(outMessageIndex)._return.value = returnVal), 
 					region, state, returnVal, outMessageIndex + 1);
 				}
 			} else {
+				//the return value is void, so we send null as last return value
 				returnSet += self.createStateForOutMessage(relevantTransitions, region, state, null, outMessageIndex + 1);
 			}
 		}
@@ -328,6 +391,7 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 	return returnSet;
 }
 
+//find a uml state with the given name in the set of states
 query Set(UML::Vertex)::findVertexWithName(name : String) : UML::Vertex {	
 		
 	self->forEach(vertex) {
@@ -340,6 +404,7 @@ query Set(UML::Vertex)::findVertexWithName(name : String) : UML::Vertex {
 	return null;
 }
 
+//map an automaton state to an uml state
 mapping ioautomaton::State::createUMLStableState() : State {
 	
 	init {	
@@ -350,6 +415,7 @@ mapping ioautomaton::State::createUMLStableState() : State {
 	}
 }
 
+//map the automaton transitions to the activity states
 mapping Automaton::createUMLActivityState() : Set(UML::State) {
 	init {	
 		var states: Set(String);
