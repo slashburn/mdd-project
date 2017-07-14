@@ -64,7 +64,7 @@ query createRegion(automaton: Automaton) : UML::Region {
 					language := "en";
 				};
 			
-				log("Transition added: " + name + " with return value " + exitpoint.returnValue);
+				log("Transition added: " + name);
 			};
 			
 			region.transition += outgoingumltransition;
