@@ -33,39 +33,24 @@
         <transition name="WaitPassword -> enterPassword" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20enterPassword">
           <trigger name="enterPassword"/>
         </transition>
-        <transition name="WaitTakeCard -> takeCard" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20takeCard">
-          <trigger name="takeCard"/>
-        </transition>
         <transition name="WaitPassword -> cancel" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20cancel">
           <trigger name="cancel"/>
         </transition>
-        <transition>
-          <effect xsi:type="uml:OpaqueBehavior" body="">
-            <language>en</language>
-          </effect>
+        <transition name="WaitTakeCard -> takeCard" target="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20takeCard">
+          <trigger name="takeCard"/>
         </transition>
         <transition>
           <effect xsi:type="uml:OpaqueBehavior" body="">
             <language>en</language>
           </effect>
         </transition>
-        <transition>
-          <effect xsi:type="uml:OpaqueBehavior" body="">
-            <language>en</language>
-          </effect>
-        </transition>
-        <transition>
-          <effect xsi:type="uml:OpaqueBehavior" body="">
-            <language>en</language>
-          </effect>
-        </transition>
-        <subvertex xsi:type="uml:State" name="WaitPassword"/>
         <subvertex xsi:type="uml:State" name="WaitCard"/>
+        <subvertex xsi:type="uml:State" name="WaitPassword"/>
         <subvertex xsi:type="uml:State" name="WaitTakeCard"/>
         <subvertex xsi:type="uml:State" name=": enterPassword" submachine="/9"/>
-        <subvertex xsi:type="uml:State" name=": takeCard" submachine="/12"/>
-        <subvertex xsi:type="uml:State" name=": insertCard" submachine="/14"/>
-        <subvertex xsi:type="uml:State" name=": cancel" submachine="/16"/>
+        <subvertex xsi:type="uml:State" name=": takeCard" submachine="/10"/>
+        <subvertex xsi:type="uml:State" name=": cancel" submachine="/11"/>
+        <subvertex xsi:type="uml:State" name=": insertCard" submachine="/12"/>
       </region>
     </packagedElement>
   </uml:Model>
@@ -98,52 +83,8 @@
   <uml:Pseudostate kind="exitPoint"/>
   <uml:StateMachine name=": enterPassword" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20enterPassword">
     <region name="Main region of statemachine from activity state : enterPassword">
-      <transition source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/@subvertex.0" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.badAccountMessage"/>
-      <transition name="user.badAccountMessage -> user.ejectCard" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.badAccountMessage" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.ejectCard"/>
-      <transition name="user.ejectCard -> user.printReceipt" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.ejectCard" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.printReceipt"/>
-      <transition name="user.printReceipt -> user.requestTakeCard" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.printReceipt" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.requestTakeCard"/>
-      <transition name="user.requestTakeCard -> consortium.verifyAccount" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.requestTakeCard" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/consortium.verifyAccount"/>
-      <transition name="consortium.verifyAccount -> exit" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/consortium.verifyAccount" target="/10"/>
-      <transition source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/@subvertex.0" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.requestPassword"/>
-      <transition name="user.requestPassword -> consortium.verifyAccount" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/user.requestPassword" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/consortium.verifyAccount.1"/>
-      <transition name="consortium.verifyAccount -> exit" source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/consortium.verifyAccount.1" target="/11"/>
+      <transition source="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/@subvertex.0" target="/9/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20enterPassword/consortium.verifyAccount"/>
       <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
-      <subvertex xsi:type="uml:State" name="user.badAccountMessage">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.badAccountMessage">
-          <body>check := user.badAccountMessage</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="user.ejectCard">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.ejectCard">
-          <body>check := user.ejectCard</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="user.printReceipt">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.printReceipt">
-          <body>check := user.printReceipt</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="user.requestTakeCard">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.requestTakeCard">
-          <body>check := user.requestTakeCard</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="consortium.verifyAccount">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := consortium.verifyAccount">
-          <body>check := consortium.verifyAccount</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="user.requestPassword">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.requestPassword">
-          <body>check := user.requestPassword</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
       <subvertex xsi:type="uml:State" name="consortium.verifyAccount">
         <doActivity xsi:type="uml:OpaqueBehavior" name="check := consortium.verifyAccount">
           <body>check := consortium.verifyAccount</body>
@@ -152,62 +93,19 @@
       </subvertex>
     </region>
   </uml:StateMachine>
-  <uml:Pseudostate kind="exitPoint"/>
-  <uml:Pseudostate kind="exitPoint"/>
   <uml:StateMachine name=": takeCard" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20takeCard">
     <region name="Main region of statemachine from activity state : takeCard">
-      <transition source="/12/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20takeCard/@subvertex.0" target="/12/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20takeCard/user.displayMainScreen"/>
-      <transition name="user.displayMainScreen -> exit" source="/12/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20takeCard/user.displayMainScreen" target="/13"/>
       <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
-      <subvertex xsi:type="uml:State" name="user.displayMainScreen">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.displayMainScreen">
-          <body>check := user.displayMainScreen</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
     </region>
   </uml:StateMachine>
-  <uml:Pseudostate kind="exitPoint"/>
-  <uml:StateMachine name=": insertCard" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20insertCard">
-    <region name="Main region of statemachine from activity state : insertCard">
-      <transition source="/14/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20insertCard/@subvertex.0" target="/14/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20insertCard/user.requestPassword"/>
-      <transition name="user.requestPassword -> exit" source="/14/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20insertCard/user.requestPassword" target="/15"/>
-      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
-      <subvertex xsi:type="uml:State" name="user.requestPassword">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.requestPassword">
-          <body>check := user.requestPassword</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-    </region>
-  </uml:StateMachine>
-  <uml:Pseudostate kind="exitPoint"/>
   <uml:StateMachine name=": cancel" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20cancel">
     <region name="Main region of statemachine from activity state : cancel">
-      <transition source="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/@subvertex.0" target="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/user.ejectCard"/>
-      <transition name="user.ejectCard -> user.requestTakeCard" source="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/user.ejectCard" target="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/user.requestTakeCard"/>
-      <transition name="user.requestTakeCard -> user.canceledMessage" source="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/user.requestTakeCard" target="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/user.canceledMessage"/>
-      <transition name="user.canceledMessage -> exit" source="/16/Main%20region%20of%20statemachine%20from%20activity%20state%20:%20cancel/user.canceledMessage" target="/17"/>
       <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
-      <subvertex xsi:type="uml:State" name="user.ejectCard">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.ejectCard">
-          <body>check := user.ejectCard</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="user.requestTakeCard">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.requestTakeCard">
-          <body>check := user.requestTakeCard</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
-      <subvertex xsi:type="uml:State" name="user.canceledMessage">
-        <doActivity xsi:type="uml:OpaqueBehavior" name="check := user.canceledMessage">
-          <body>check := user.canceledMessage</body>
-          <language>en</language>
-        </doActivity>
-      </subvertex>
     </region>
   </uml:StateMachine>
-  <uml:Pseudostate kind="exitPoint"/>
+  <uml:StateMachine name=": insertCard" submachineState="/1/UML%20State%20Machine%20for%20atm/Main%20region%20from%20state%20machine%20for%20atm/:%20insertCard">
+    <region name="Main region of statemachine from activity state : insertCard">
+      <subvertex xsi:type="uml:Pseudostate" kind="entryPoint"/>
+    </region>
+  </uml:StateMachine>
 </xmi:XMI>

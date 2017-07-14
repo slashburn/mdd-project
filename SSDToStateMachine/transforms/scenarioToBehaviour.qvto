@@ -135,15 +135,11 @@ mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
 	};
 	result._return := object Return {
 		if(self._return.oclIsTypeOf(Void)) {
-			_return := object Return {
-				value := "void"
-			}
+			value := "void"
 		} 
 		else {
 			var oldReturn := self._return.oclAsType(ssdRoot::Value);
-			_return := object Return{
-				value := oldReturn.value
-			}
+			value := oldReturn.value
 		};
 	};
 	log("new out message: <" + result.operation.name + ", " + result._object.name + ", " + result._return.value + ">");
