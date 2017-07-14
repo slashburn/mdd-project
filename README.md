@@ -30,9 +30,9 @@ In order to run the project you will need to create a run configuration.
 5) In the Transformation parameters set the **OUT Model** to *platform:/resource/SSDToStateMachine/result/Transformation.uml* The generated model will be written to this file.
 
 ## Contributors
-* Jan Göbel
-* Katja Ludwig
-* Jens Wöhrle
+* Jan Göbel (slashburn)
+* Katja Ludwig (kaulquappe23) 
+* Jens Wöhrle (SweetyGott)
 * Alexander Knapp (supervisor)
 
 ## Notes
