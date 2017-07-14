@@ -4,7 +4,7 @@ modeltype IOAutomatonModel uses "mm:ioautomaton";
 transformation automatonToStatemachine(in automata: IOAutomatonModel, out statemachines: UML);
 
 main() {
-	log("\n\nTransformation IOAutomatonModel -> Statemachine");
+	log("\n\n-------------------------------------------------\nTransformation IOAutomatonModel -> Statemachine");
 	log("#Automaton container: " + automata.objectsOfType(AutomatonContainer)->size().toString());
 	var automatacontainer := automata.objectsOfType(AutomatonContainer);
 	automatacontainer->map automatonContainerToStatemachineContainer();	
@@ -45,7 +45,7 @@ query createRegion(automaton: Automaton) : UML::Region {
 	
 	var activityStates := automaton.map createUMLActivityState();
 	region.subvertex += activityStates;	
-	region.transition += automaton.createTransitions(activityStates);
+	region.transition += automaton.createTransitions(region.subvertex);
 	
 	activityStates->forEach(state) {
 		 var machineWithExits := state.createSubmachine(automaton.transition);
@@ -54,7 +54,7 @@ query createRegion(automaton: Automaton) : UML::Region {
 		 machineWithExits.exitpoints->forEach(exitpoint) {
 			
 			var  outgoingumltransition := object UML::Transition {
-				name := state.name + " -> " + exitpoint.nextState.name + "with return " + exitpoint.returnValue;
+				name := state.name + " -> " + exitpoint.nextState.name + " with return " + exitpoint.returnValue;
 				source := exitpoint.exitpoint;
 				target := region.subvertex->findVertexWithName(exitpoint.nextState.name);
 				
@@ -127,6 +127,7 @@ query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) :
 	log("For operation " + self.name.substituteFirst(": ", "") + ", " + transitionsWithCorrectOperationName->size().toString() + " relevant tranistions were found");
 	
 	var exits := self.createStateForOutMessage(transitionsWithCorrectOperationName, region, entry, null, 1);
+	log("#exit points for submachine " + self.name + " : " + exits->size().toString());
 		
 	return object StatemachineExitpoint {
 		machine := statemachine;
@@ -157,6 +158,12 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 		
 		if (t.outmessage->size() < outMessageIndex) {
 			
+			if (previousState.oclIsTypeOf(Pseudostate)) {
+				log("final state after entry point");
+			} else {
+				log("final state after " + previousState.name);
+			};
+			
 			var exit := object UML::Pseudostate {
 				kind := UML::PseudostateKind::exitPoint;
 			};
@@ -176,10 +183,12 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 				source := previousState;
 				target := exit;
 			};
+			
+			continue;
 		};
 		
 		var receiver := t.outmessage->at(outMessageIndex)._object.name;			
-		if (not allReceiverNames->exists(s | s = receiver) and t.outmessage->at(outMessageIndex)._return.value != "void") {
+		if (not allReceiverNames->exists(s | s = receiver)) {
 			allReceiverNames += receiver;
 			receiverOperationDict->put(receiver, object Set(String){});
 			log("Receiver name " + receiver + " added");
@@ -204,7 +213,7 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 	};
 	
 	if (allReceiverNames->size() = 0) {
-		return null;
+		return returnSet;
 	};
 	
 	allReceiverNames->forEach(receiver) {		
