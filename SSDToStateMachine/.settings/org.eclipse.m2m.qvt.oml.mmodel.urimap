@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uriMap:MappingContainer xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:uriMap="http:///www.eclipse.org/m2m/qvt/oml/MModelUriMap/1.0.0">
+  <mapping sourceURI="mm:sequencediagram" targetURI="platform:/resource/SSDToStateMachine/metamodels/sequencediagram.ecore"/>
+  <mapping sourceURI="mm:behaviour" targetURI="platform:/resource/SSDToStateMachine/metamodels/behaviour.ecore"/>
+  <mapping sourceURI="mm:ioautomaton" targetURI="platform:/resource/SSDToStateMachine/metamodels/ioautomaton.ecore"/>
+</uriMap:MappingContainer>

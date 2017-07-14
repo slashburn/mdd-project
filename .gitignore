@@ -4,11 +4,7 @@
 # Log file
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+*.metadata
 
 # Package Files #
 *.jar
@@ -18,43 +14,8 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-bin/
-target/
-*.java._trace
 *.pyc
-.DS_Store
 *.xtendbin
-*~
-# Workspace metadata folder created by Oomph when launching tests.
-tests/**/.metadata/
-**/src/site/resources/images/rcptt-screenshots
-
-
-
-
-
-
-
-
-target/
-out/
-
-app/bin/
-app/gen/
-app/build/
-app/out/
-app/target/
-
-test/bin/
-test/gen/
-test/build/
-test/out/
-test/target/
-
-gen-external-apklibs/
 
 ## ignore certain files
 test/proguard.cfg
@@ -63,18 +24,8 @@ test/proguard.cfg
 *.keystore
 release.properties
 
-## ignore IDE project files
-*.iml
-.idea/
-.project
-.settings/
-.classpath
-.metadata
-.checkstyle
-
 ## ignore temp files from various editors
 .DS_Store
 *~
 *.swp
 Back to Top
-
