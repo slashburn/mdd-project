@@ -33,6 +33,7 @@ mapping Interaction::interactionToScenario() : Scenario {
 			//case state invariant
 			var stateInvariant := interactionFragment.oclAsType(StateInvariant);
 			var lifelines := stateInvariant.covered;
+			log("state invariant " + stateInvariant.name);
 			
 			//iterate over all covered lifelines for this state invariant
 			lifelines->forEach(lifeline) {
@@ -71,8 +72,9 @@ mapping Interaction::interactionToScenario() : Scenario {
 				
 				//these messages are replies to system communications
 				var allSystemCommunications : OrderedSet(SystemCommunication) := communication->select(comm | comm.oclIsTypeOf(SystemCommunication)).oclAsType(SystemCommunication)->asOrderedSet();							
-				//get all system communications that could
+				//get all system communications that could be the request message for this reply
 				var allMatchingCommunications = allSystemCommunications->select(comm | comm.requestMatchesReply(mos.message));									
+				//as the messages are ordered, the last one is the real request
 				var matchedRequest := allMatchingCommunications->last();
 				matchedRequest._return := createValueReturn(mos.message.name);
 			}
@@ -85,6 +87,7 @@ mapping Interaction::interactionToScenario() : Scenario {
 mapping Message::messageToUserCommunication() : UserCommunication {	
 	usermessage := self.createUserMessage();
 	_return := createVoidReturn();
+	log("user communication: operation " + usermessage.operation.name);
 }
 
 //map a message to a system communication object with return void
@@ -92,6 +95,7 @@ mapping Message::messageToSystemCommunication() : SystemCommunication {
 	firstState := self.receiveEvent.lifeline().createStateFromDict();
 	systemmessage := self.createSystemMessage();
 	_return := createVoidReturn();
+	log("system communication: first state " + firstState.name + " and operation " + systemmessage.operation.name);
 }
 
 //checks if the system communication matches as request for the given message as reply in the sequence diagram

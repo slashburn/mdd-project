@@ -1,25 +1,30 @@
 modeltype BehaviourModel uses "mm:behaviour";
 modeltype ScenarioModel uses "mm:sequencediagram";
 
-
+//second transformation: from the tabular scenario model to the tabular/block behaviour model
 transformation scenarioToBehaviour(in scenarios: ScenarioModel, out behaviour: BehaviourModel) ;
 
 main() {
-	log("\n\nTransformation Scenario -> Behaviour");
+	log("\n\n-----------------------------------\nTransformation Scenario -> Behaviour");
 	var scenariocontainer := scenarios.objectsOfType(ScenarioContainer);
 	scenariocontainer->map scenarioContainerToBehaviourContainer();
 }
 
+//map the scenario container to the behaviour container
 mapping ScenarioContainer::scenarioContainerToBehaviourContainer() : BehaviourContainer {
 	
+	//map every scenario to a behaviour
 	var mappedScenarios := self.scenario->map scenarioToBehaviours();
 	
+	//add all created behaviours to the container
 	mappedScenarios->forEach(behaviours) {
-		result.behaviour += result.behaviour->union(behaviours);
+		result.behaviour += behaviours;
 	}
 }
 
+//map a scenario to a set of behaviours - for each sender one behaviour
 mapping Scenario::scenarioToBehaviours() : Set(Behaviour) {
+	
 	init {
 	
 		log("Mapping scenario to behaviours");
@@ -28,6 +33,9 @@ mapping Scenario::scenarioToBehaviours() : Set(Behaviour) {
 		
 		var systemmessages : Set(SystemMessage);
 		var usermessages : Set(UserMessage);
+		
+		//the next lines are used to get all existing system objects (occuring in system communications as sender or receiver and 
+		//in user communications as sender)
 		communications->forEach(comm | comm.oclIsTypeOf(SystemCommunication)) {
 			var systemComm := comm.oclAsType(SystemCommunication);
 			systemmessages += systemComm.systemmessage;
@@ -58,15 +66,23 @@ mapping Scenario::scenarioToBehaviours() : Set(Behaviour) {
 			};
 		};
 		
+		//now we have all system objects
+		
 		log("#SystemObjects: " + systemObjects->size().toString());
 		
+		//and we can iterate over them
 		systemObjects->forEach(systemObject) {
 			
 			log("SystemObject: "+ systemObject.name);
+			
+			//create a behaviour object for each system object
 			var behaviour:= self.createBehaviour(systemObject.name);
+			//and create the communications - they will be the block later
 			var communicationsForSysObject := self.communication->getCommunicationsForSystemObject(systemObject);
-				
+			
+			//map all found communications to blocks and add them to the behaviour object	
 			behaviour.block := communicationsForSysObject->map communicationsToBlocks(systemObject);
+			//the behaviour object is now finished and can be added to the result set
 			result += behaviour;
 			log("#Behaviours until now: " + result->size().toString());				
 				
@@ -76,37 +92,40 @@ mapping Scenario::scenarioToBehaviours() : Set(Behaviour) {
 	}
 }
 
+//maps a ordered(important!) set of communications to a ordered set of blocks - the message order must not get lost here
 mapping OrderedSet(Communication)::communicationsToBlocks(systemObject: SystemObject) : OrderedSet(Block) {
 	init {
 		log("creating blocks out of the communications from " + systemObject.name);
+		
+		//iterate over each communication and create the block
 		self->forEach(comm) {
-			var block : Block;
 			
-			//TODO
+			var block : Block;			
+			
 			if(comm.oclIsTypeOf(SystemCommunication)) {
 				var systemComm := comm.oclAsType(SystemCommunication);
 				
-				//map communication to a new block
+				//map csystem ommunication to a new block
 				if(systemComm.systemmessage.systemobject.name = systemObject.name) {
-					//receiver of system communication is system object (method argument)
+					//the receiver of system communication is the system object
 					block := createBlock(systemComm);
 					result += block;
-				}
-				else if (systemComm.systemmessage._object.name = systemObject.name){
+				} else if (systemComm.systemmessage._object.name = systemObject.name){
+					//the sender of system communication is system object, that means this communication is an out message for the last created block
 					block := result->last();
 					block.activation.outmessage += systemComm->map systemCommunicationToOutMessage();
 				}
-			}
-			else if(comm.oclIsTypeOf(UserCommunication)) {
+			} else if(comm.oclIsTypeOf(UserCommunication)) {
+				//the sender of the user communication is the system object, that means this communication is an out message for the last created block
 				var userComm := comm.oclAsType(UserCommunication);
 				block := result->last();
 				block.activation.outmessage += userComm->map userCommunicatonToOutMessage();
 			}
 		}
 	}
-	
 }
 
+//map a system communication to an out message
 mapping SystemCommunication::systemCommunicationToOutMessage() : OutMessage {
 	result.operation := object Operation {
 		name := self.systemmessage.operation.name;
@@ -126,6 +145,7 @@ mapping SystemCommunication::systemCommunicationToOutMessage() : OutMessage {
 	log("new out message: <" + result.operation.name + ", " + result._object.name + ", " + result._return.value + ">");
 }
 
+//map a user communication to an out message
 mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
 	result.operation := object Operation {
 		name := self.usermessage.operation.name;
@@ -145,16 +165,14 @@ mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
 	log("new out message: <" + result.operation.name + ", " + result._object.name + ", " + result._return.value + ">");
 }
 
-
-
-
-
+//create a behaviour object with a sender
 query Scenario::createBehaviour(actor: String) : Behaviour {
 	return object Behaviour {
 		sender := actor;
 	}
 }
 
+//get all communications where the given system object is involved as sender or receiver
 query OrderedSet(ssdRoot::Communication)::getCommunicationsForSystemObject(systemObject: SystemObject) : OrderedSet(Communication) {
 	log("Computing communications for System Object: "+ systemObject.name);
 	var communications: OrderedSet(Communication);
@@ -178,6 +196,8 @@ query OrderedSet(ssdRoot::Communication)::getCommunicationsForSystemObject(syste
 	log("#communications: "+ communications->size().toString());
 	return communications;
 }
+
+//create a block object from a system communication
 query createBlock(systemCommunication: SystemCommunication) : Block {
 	return object Block {
 		prestate := object State {
@@ -206,6 +226,7 @@ query createBlock(systemCommunication: SystemCommunication) : Block {
 	}
 }
 
+//check if the set contains a system object with the given name
 query Set(SystemObject)::containsSystemObjectWithName(sysObjName : String) : Boolean {
 	
 	self->forEach(sysobj) {
@@ -215,4 +236,3 @@ query Set(SystemObject)::containsSystemObjectWithName(sysObjName : String) : Boo
 	};
 	return false;
 }
-
