@@ -30,28 +30,45 @@ mapping Automaton::automatonToStatemachine() : UML::StateMachine {
 	
 	name := "UML State Machine for " + self.sender;
 		
-	var mainRegion = createRegion(self);
+	var mainRegion = createRegion(self, result);
 	region += mainRegion; 
 
 }
 
-query createRegion(automaton: Automaton) : UML::Region {
+query createRegion(automaton: Automaton, inout origin : StateMachine) : UML::Region {
+	
+	//save the already added transitions, adding them once is sufficient
+	var addedTransitions: Set(String);
 	
 	var region := object UML::Region {
 		name := "Main region from state machine for " + automaton.sender;
 	};
 	
 	region.subvertex += automaton.state.map createUMLStableState();
+	var initial := object Pseudostate {
+		kind := UML::PseudostateKind::initial;
+	};
+	region.subvertex += initial;
 	
 	var activityStates := automaton.map createUMLActivityState();
 	region.subvertex += activityStates;	
-	region.transition += automaton.createTransitions(region.subvertex);
+	
+	region.transition += object Transition {
+		name := "initial transition for state machine " + automaton.sender;
+		source := initial;
+		target := region.subvertex->findVertexWithName(automaton.initialstate.name);
+	};
 	
 	activityStates->forEach(state) {
 		 var machineWithExits := state.createSubmachine(automaton.transition);
 		 state.submachine := machineWithExits.machine;
+		 origin.nestedClassifier += state.submachine;
+		 
+		 var connectionpointreference := object ConnectionPointReference { };
 		 
 		 machineWithExits.exitpoints->forEach(exitpoint) {
+			
+			connectionpointreference.exit += exitpoint.exitpoint;
 			
 			var  outgoingumltransition := object UML::Transition {
 				name := state.name + " -> " + exitpoint.nextState.name + " with return " + exitpoint.returnValue;
@@ -68,45 +85,39 @@ query createRegion(automaton: Automaton) : UML::Region {
 			};
 			
 			region.transition += outgoingumltransition;
+			
+			
 		};
+		
+		connectionpointreference.entry += machineWithExits.entrypoint;
+		
+		state.connection += connectionpointreference;		
+		
 	};
 	
-	return region;
-}
-
-query Automaton::createTransitions(states: Set(UML::Vertex)) : Set(UML::Transition) {
-	
-	var resultSet : Set(UML::Transition);
-	
-	//save the already added transitions, adding them once is sufficient
-	var addedTransitions: Set(String);
-		
-	self.transition->forEach(transition) {
+	automaton.transition->forEach(transition) {
 		
 		if (not addedTransitions->exists(t | t = transition.prestate.name + " -> " + transition.operation.name)) {
 			
 			var  ingoingumltransition := object UML::Transition {
 				name := transition.prestate.name + " -> " + transition.operation.name;
 				addedTransitions += name;
-				source := states->findVertexWithName(transition.prestate.name);
-				target := states->findVertexWithName(": " + transition.operation.name);
+				source := region.subvertex->findVertexWithName(transition.prestate.name);
+				target := region.subvertex->findVertexWithName(": " + transition.operation.name).oclAsType(UML::State).connection->any(true).entry->any(true);
 				trigger := object UML::Trigger {
 					name := transition.operation.name;
 				};
 				log("Transition added: " + name + " with trigger " + transition.operation.name);
 			};
 			
-			resultSet += ingoingumltransition;
+			region.transition += ingoingumltransition;
 		};
-		
-	};
+	};	
 	
-	
-	return resultSet;
-	
+	return region;
 }
 
-query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) : StatemachineExitpoint {
+query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) : StatemachineConnection {
 	
 	var statemachine := object  UML::StateMachine {
 		name := self.name;
@@ -128,17 +139,23 @@ query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) :
 	
 	var exits := self.createStateForOutMessage(transitionsWithCorrectOperationName, region, entry, null, 1);
 	log("#exit points for submachine " + self.name + " : " + exits->size().toString());
+	
+	exits->forEach(exit) {
+		region.subvertex += exit.exitpoint;
+	};
 		
-	return object StatemachineExitpoint {
+	return object StatemachineConnection {
 		machine := statemachine;
 		exitpoints := exits;
+		entrypoint := entry;
 	};
 	
 }
 
-intermediate class StatemachineExitpoint {
+intermediate class StatemachineConnection {
 	machine : StateMachine;
 	exitpoints: Set(ExitConnectionReturn);
+	entrypoint: Pseudostate;
 }
 
 intermediate class ExitConnectionReturn {
@@ -157,7 +174,7 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 	transitionsWithCorrectOperationName->forEach(t) {
 		
 		if (t.outmessage->size() < outMessageIndex) {
-			
+			//final state
 			if (previousState.oclIsTypeOf(Pseudostate)) {
 				log("final state after entry point");
 			} else {
@@ -265,14 +282,19 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 			
 			var possibleReturnValues : Set(String);
 			relevantTransitions->forEach(t) {
-				if (not possibleReturnValues->exists(s | s = t._return.value) and not (t._return.value = "void")) {
-					possibleReturnValues += t._return.value;
+				if (not possibleReturnValues->exists(s | s = t.outmessage->at(outMessageIndex)._return.value) and not (t.outmessage->at(outMessageIndex)._return.value = "void")) {
+					possibleReturnValues += t.outmessage->at(outMessageIndex)._return.value;
 				}
+			};
+			
+			if (state.name = "consortium.verifyAccount") {
+				log("");
 			};
 			
 			if (not possibleReturnValues->isEmpty()) {
 				possibleReturnValues->forEach(returnVal) {
-					returnSet += self.createStateForOutMessage(relevantTransitions, region, state, returnVal, outMessageIndex + 1);
+					returnSet += self.createStateForOutMessage(relevantTransitions->select(t | t.outmessage->at(outMessageIndex)._return.value = returnVal), 
+					region, state, returnVal, outMessageIndex + 1);
 				}
 			} else {
 				returnSet += self.createStateForOutMessage(relevantTransitions, region, state, null, outMessageIndex + 1);

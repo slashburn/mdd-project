@@ -25,16 +25,10 @@ mapping AutomatonContainer::mergeAutomata() : AutomatonContainer {
 helper Set(Automaton)::mergeAutomata() : Automaton {
 	var resultAutomaton := object Automaton {};
 	
-	//eliminate duplicates
 	var duplicateFreeStates := eliminateDuplicateStates(self);
 	var duplicateFreeTransitions := eliminateDuplicateTransitions(self, duplicateFreeStates);
 	
 	duplicateFreeStates->forEach(state) {
-//		state.incomingtransition->forEach(transition) {
-//			if (transition.prestate = null) {
-//				log("problem!!!");
-//			};
-//		};
 		adjustTransitions(state, duplicateFreeTransitions);
 	};
 	
@@ -179,8 +173,8 @@ helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
 	return stateDict->values()->asSet();
 }
 
-query createOutMessages(outMessage: Set(OutMessage)) : Set(OutMessage) {
-	var resultMessages: Set(OutMessage);
+query createOutMessages(outMessage: OrderedSet(OutMessage)) : OrderedSet(OutMessage) {
+	var resultMessages: OrderedSet(OutMessage);
 	outMessage->forEach(message) {
 		resultMessages += object OutMessage {
 			operation := createOperation(message.operation.name);
