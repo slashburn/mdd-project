@@ -1,107 +1,110 @@
 modeltype UML uses  "http://www.eclipse.org/uml2/5.0.0/UML";
 modeltype ScenarioModel uses "mm:sequencediagram";
 
+//first transformation: from uml sequence diagram to the tabular scenario model as described in the paper 
 transformation umlToScenario(in ssd: UML, out scenarios: ScenarioModel) ;
 
 property actorStateDict : Dict(String, String);
 
 main() {
-	log("\n\nTransformation UML -> Scenario");
+	log("\n\n--------------------------------------\nTransformation UML -> Scenario");
 	ssd.objectsOfType(Model)->map modelToScenarioContainer();
 }
 
+//map the root model from the sequence diagram to a scenario container
 mapping Model::modelToScenarioContainer() : ScenarioContainer {
+	
+	//each scenario corresponds to one sequence diagram contained in the uml model
+	//a sequence diagram is represented by the interactions selected here
 	result.scenario += self.packagedElement->selectByType(Interaction)->map interactionToScenario();
 }
 
+//a sequence diagram (as UML::Interaction) is mapped to a scenario
 mapping Interaction::interactionToScenario() : Scenario {
 	
+	//save each actor and the current state
 	actorStateDict->clear();	
-		
+	
+	//iterate over  all interaction fragment, they can be state invariants or message occurance specifications	
 	self.fragment->forEach(interactionFragment) {		
 		
 		if (interactionFragment.oclIsTypeOf(StateInvariant)) {
+			
+			//case state invariant
 			var stateInvariant := interactionFragment.oclAsType(StateInvariant);
 			var lifelines := stateInvariant.covered;
+			
+			//iterate over all covered lifelines for this state invariant
 			lifelines->forEach(lifeline) {
+				//save the state invariant as state for the current actor(the lifeline name)
 				actorStateDict->put(lifeline.name, stateInvariant.name);
+				
+				//if we have already added a system communication, we iterate over these
 				communication->forEach(comm | comm.oclIsKindOf(SystemCommunication)) {
 					var systemCommunication := comm.oclAsType(SystemCommunication);
-					//check if there is no postState
+					//check if there is no post state, and set the post state as the state invariant state if the receiver of the system communication 
+					//is the actor - this is for the last messages and the state invariants at the lifeline ends
 					if (systemCommunication.secondState = null and systemCommunication.systemmessage.systemobject.name = lifeline.name) {
 						systemCommunication.secondState := lifeline.createStateFromDict();
 					}
 					
 				}
-			};
+			};			
 			
+		} else if (interactionFragment.oclIsTypeOf(MessageOccurrenceSpecification))  {
 			
-		}
-		else if (interactionFragment.oclIsTypeOf(MessageOccurrenceSpecification))  {
+			//case not state invariant but message occurence specification
 			var mos = interactionFragment.oclAsType(MessageOccurrenceSpecification);
 			var mosType := mos.message.messageSort;
-//			if (mos.isSend()){
-				if (mos.message.messageSort = MessageSort::synchCall) {
-					
-					//Synchronous calls correspond to system communications
-					communication +=  mos.message.map messageToSystemCommunication();
-				} else if (mos.message.messageSort = MessageSort::asynchCall) {
-					
-					//asynch calls correspond to user communications
-					communication +=  mos.message.map messageToUserCommunication();	
-				} else if (mos.message.messageSort = MessageSort::reply) {
-					
-					//these messages are replies to system communications
-					var allSystemCommunications : OrderedSet(SystemCommunication) := communication->select(comm | comm.oclIsTypeOf(SystemCommunication)).oclAsType(SystemCommunication)->asOrderedSet();							
-					var allMatchingCommunications = allSystemCommunications->select(comm | comm.requestMatchesReply(mos.message));									
-					var matchedRequest := allMatchingCommunications->last();
-					matchedRequest._return := createValueReturn(mos.message.name);
-				}
-//			}
+			
+			if (mos.message.messageSort = MessageSort::synchCall) {				
+				
+				//Synchronous calls correspond to system communications
+				communication +=  mos.message.map messageToSystemCommunication();
+				
+			} else if (mos.message.messageSort = MessageSort::asynchCall) {
+				
+				//asynch calls correspond to user communications
+				communication +=  mos.message.map messageToUserCommunication();	
+				
+			} else if (mos.message.messageSort = MessageSort::reply) {
+				
+				//these messages are replies to system communications
+				var allSystemCommunications : OrderedSet(SystemCommunication) := communication->select(comm | comm.oclIsTypeOf(SystemCommunication)).oclAsType(SystemCommunication)->asOrderedSet();							
+				//get all system communications that could
+				var allMatchingCommunications = allSystemCommunications->select(comm | comm.requestMatchesReply(mos.message));									
+				var matchedRequest := allMatchingCommunications->last();
+				matchedRequest._return := createValueReturn(mos.message.name);
+			}
 		};
 	}
 		
 }
 
-
-	
-mapping Message::messageToUserCommunication() : UserCommunication {
-	
+//map a message to a user communivation object with return void	
+mapping Message::messageToUserCommunication() : UserCommunication {	
 	usermessage := self.createUserMessage();
 	_return := createVoidReturn();
 }
 
+//map a message to a system communication object with return void
 mapping Message::messageToSystemCommunication() : SystemCommunication {
 	firstState := self.receiveEvent.lifeline().createStateFromDict();
 	systemmessage := self.createSystemMessage();
 	_return := createVoidReturn();
 }
 
-
-mapping Lifeline::userLifelineToUserCommunication() : UserCommunication {
-	var interaction : Interaction = self.container().oclAsType(Interaction);
-}
-
-mapping Interaction::interactionToSystemCommunication() : SystemCommunication when {
-	not(self.name.toLowerCase().endsWith("user")); //we're only dealing with system interactions here
-}{
-	
-		
-}
-
+//checks if the system communication matches as request for the given message as reply in the sequence diagram
 query SystemCommunication::requestMatchesReply(reply: Message) : Boolean {
 	return 	self._return.oclIsTypeOf(Void) and
 			self.systemmessage.systemobject.name = reply.sendEvent.lifeline().name and
 			self.systemmessage._object.name = reply.receiveEvent.lifeline().name;
 }
 
-
 /**********************
-
-	Factory Methods
-	 
+	Factory Methods	 
 ***********************/
-
+//creates a user message object with all attributes
 query Message::createUserMessage() : UserMessage {
 	return object UserMessage {
 		_object := self.createObject();
@@ -110,7 +113,7 @@ query Message::createUserMessage() : UserMessage {
 	}
 }
 
-
+//creates a system message object with all attributes
 query Message::createSystemMessage() : SystemMessage {
 	return object SystemMessage {
 		_object := self.createObject();
@@ -118,48 +121,65 @@ query Message::createSystemMessage() : SystemMessage {
 		systemobject := self.receiveEvent.createSystemObject()
 	}
 }
+
+//creates an operation object with the same name as the message
 query Message::createOperation() : ssdRoot::Operation {
 	return object ssdRoot::Operation {
 		name := self.name;
 	}	
 }
 
+//creates a system object or user, depending on the covered receiver lifeline by the message
 query Message::createObject() : ssdRoot::Object {
 	if(self.sendEvent.isUser()) {
 		return self.createUser();
 	};
 	return self.sendEvent.createSystemObject();
 }
+
+//creates a user object
 query Message::createUser() : ssdRoot::User {
 	return object ssdRoot::User {
 		name := "user";
 	}
 }
 
+//creates a system object with the name of the lifeline that this message end coveres as name
 query MessageEnd:: createSystemObject() : ssdRoot::SystemObject {
 	return object SystemObject {
 		name := self.lifeline().name
 	}
 }
+
+//creates a void return object
 query createVoidReturn() :Return {
 	return object Void {};
 }
+
+//creates a return value object with the given value as value
 query createValueReturn(val : String) : Return {
 	return object Value {
 		value := val;
 	}
 }
 
+//returns the lifeline that this message end belongs to
 query MessageEnd::lifeline() : Lifeline {
 	return self.oclAsType(MessageOccurrenceSpecification).getCovered();
 }
+
+//returns true if the lifeline from this message end represents the user
 query MessageEnd::isUser() : Boolean {
 
 	return self.lifeline().name.isUser();
 }
+
+//returns true if the string is "user"
 query String::isUser() : Boolean {
 	return self.toLower() = "user";
 }
+
+//return the state with the last state invariant name as state name for the actor with the same name as the lifeline
 query Lifeline::createStateFromDict() : ssdRoot::State {
 	return object ssdRoot::State {
 		name := actorStateDict->get(self.name);

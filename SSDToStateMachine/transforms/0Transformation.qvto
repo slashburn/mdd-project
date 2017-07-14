@@ -16,20 +16,25 @@ transformation Transformation (in sequence : UML, out statemachine : UML)
 	access transformation mergeAutomata(in IOAutomatonModel, out IOAutomatonModel)
 	access transformation automatonToStatemachine(in IOAutomatonModel, out UML);
 
+//this is the main transformation method
 main() {
-
+	
+	//create variables for all intermediate products
 	var scenarios := ScenarioModel.createEmptyModel().oclAsType(ScenarioModel);
 	var behaviours := ScenarioModel.createEmptyModel().oclAsType(BehaviourModel);
 	var automata := ScenarioModel.createEmptyModel().oclAsType(IOAutomatonModel);
 	var automata2 := ScenarioModel.createEmptyModel().oclAsType(BehaviourModel);
 	
+	//create each transformation with intermediate product variables
 	var uml2Scenario := new umlToScenario(sequence, scenarios);
 	var scenario2Behaviour := new scenarioToBehaviour(scenarios, behaviours);
 	var behaviour2Automaton := new behaviourToAutomaton(behaviours, automata);
 	var mergedAutomaton := new mergeAutomata(automata, automata2);
 	var automaton2Statemachine := new automatonToStatemachine(automata2, statemachine);
 	
+	//execute all transformations
 	log ("**start transformation**");
+	
 	uml2Scenario.transform();
 	scenario2Behaviour.transform();
 	behaviour2Automaton.transform();
