@@ -1,7 +1,7 @@
 # Model Driven Software Development Project
 Model Driven Software Development Project (Elite Graduate Program, Summer Term 2017). University of Augsburg / Technical University of Munich / Ludwig-Maximilian University.
 
-Implementation of: Hennicker, Rolf, and Alexander Knapp. "Activity-driven synthesis of state machines." Fundamental Approaches to Software Engineering (2007): 87-101.
+**Implementation of:** Hennicker, Rolf, and Alexander Knapp. "Activity-driven synthesis of state machines." *Fundamental Approaches to Software Engineering* (2007): 87-101.
 
 ## Setup
 1) Install the latest version of Eclipse Modelling Tools: https://eclipse.org/modeling/
