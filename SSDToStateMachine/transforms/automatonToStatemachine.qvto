@@ -11,11 +11,16 @@ main() {
 }
 
 mapping AutomatonContainer::automatonContainerToStatemachineContainer() : UML::Model {
-	log("#Automata: " + self.automaton->size().toString());
 	
-	var statemachine := createUMLModel();
-	
-	statemachine.packagedElement += self.automaton->map automatonToStatemachine();
+	init {
+		log("#Automata: " + self.automaton->size().toString());
+		
+		var statemachine := createUMLModel();
+		
+		statemachine.packagedElement += self.automaton->map automatonToStatemachine();
+		
+		result := statemachine;
+	}
 }
 
 query createUMLModel() : UML::Model {
@@ -47,6 +52,7 @@ query createRegion(automaton: Automaton, inout origin : StateMachine) : UML::Reg
 	region.subvertex += automaton.state.map createUMLStableState();
 	var initial := object Pseudostate {
 		kind := UML::PseudostateKind::initial;
+		name := "initial state for state machine " + automaton.sender;
 	};
 	region.subvertex += initial;
 	
@@ -130,6 +136,7 @@ query UML::State::createSubmachine(transitions : Set(ioautomaton::Transition)) :
 	
 	var entry := object UML::Pseudostate {
 		kind := UML::PseudostateKind::entryPoint;
+		name := "entry point for submachine " + self.name;
 	};
 	
 	region.subvertex += entry;
@@ -183,14 +190,19 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 			
 			var exit := object UML::Pseudostate {
 				kind := UML::PseudostateKind::exitPoint;
+				var exitname := "exit point after " + previousState.name;
+				if (previousReturn != null) {
+					exitname := exitname + " with guard [check := " + previousReturn + "]";
+				};
+				name :=  exitname;
 			};
 			
 			returnSet += object ExitConnectionReturn {
 				exitpoint := exit;
-				if (previousReturn = null) {
+				if (t._return = null) {
 					returnValue := "void";
 				} else {
-					returnValue := previousReturn;
+					returnValue := t._return.value;
 				};
 				nextState := t.poststate;
 			};
@@ -199,6 +211,17 @@ helper UML::State::createStateForOutMessage(transitionsWithCorrectOperationName 
 				name := previousState.name + " -> exit";
 				source := previousState;
 				target := exit;
+				
+				if (previousReturn != null) {
+					guard := object UML::Constraint {
+						name := "[check = " + previousReturn + "]";
+						specification := object UML::OpaqueExpression {
+							name := "check = " + previousReturn;
+							body := "check = " + previousReturn;
+							language := "en";
+						};
+					}
+				}
 			};
 			
 			continue;
