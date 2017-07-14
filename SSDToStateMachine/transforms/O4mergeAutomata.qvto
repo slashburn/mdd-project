@@ -9,6 +9,7 @@ main() {
 	automatonContainer->map mergeAutomata();	
 }
 
+// merge all automata together
 mapping AutomatonContainer::mergeAutomata() : AutomatonContainer {
 		
 	self.automaton.sender->asSet()->forEach(sender) {
@@ -26,6 +27,7 @@ mapping AutomatonContainer::mergeAutomata() : AutomatonContainer {
 helper Set(Automaton)::mergeAutomata() : Automaton {
 	var resultAutomaton := object Automaton {};
 	
+	//consolidate states and transitions by eliminating duplicates.
 	var duplicateFreeStates := eliminateDuplicateStates(self);
 	var duplicateFreeTransitions := eliminateDuplicateTransitions(self, duplicateFreeStates);
 	
@@ -33,24 +35,28 @@ helper Set(Automaton)::mergeAutomata() : Automaton {
 		adjustTransitions(state, duplicateFreeTransitions);
 	};
 	
+	//assemble the merged automaton by using the duplicate free states and duplicate free transitions
 	resultAutomaton.state := duplicateFreeStates;
+	
+	//set one of the merged automata's initial state as the initial state of the merged automaton (non-determinstic)
 	resultAutomaton.initialstate := resultAutomaton.state-> findState(self->asSequence()->first().initialstate.name);	
 	resultAutomaton.transition := duplicateFreeTransitions;
 	return resultAutomaton;
 }
 
-
+//eliminate possible duplicate transitions to ensure consistency of the result automaton
 helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Transition)) {
 	
 	log("Adjust transitions for state: " + state.name);
 	
+	//adjust incoming transitions
 	var adjustedIncomingTransitions : Set(Transition);
 	state.incomingtransition->forEach(transition) {
 		adjustedIncomingTransitions += duplicateFreeTransitions->findTransition(transition);
 	};
 	state.incomingtransition := adjustedIncomingTransitions;
 	
-	
+	//adjust outgoing transitions
 	var adjustedOutgoingTransitions : Set(Transition);
 	state.outgoingtransition->forEach(transition) {
 		adjustedOutgoingTransitions += duplicateFreeTransitions->findTransition(transition);
@@ -58,6 +64,8 @@ helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Trans
 	state.outgoingtransition := adjustedOutgoingTransitions;	
 }
 
+//find a transition within a set of transitions
+//The operation name, prestate, poststate and the outmessages must match exactly
 query Set(Transition)::findTransition(t: Transition) : Transition {
 	
 	self->forEach(transition ) {
@@ -68,7 +76,7 @@ query Set(Transition)::findTransition(t: Transition) : Transition {
 		 	
 		 	continue;
 		};
-		
+		//check if both transitions have the same out messages
 		var transitionsSetsNotEqual := false;
 		t.outmessage->forEach(outMsg | not transition.outmessage->containsOutMessage(outMsg)){
 			transitionsSetsNotEqual := true;
@@ -79,6 +87,7 @@ query Set(Transition)::findTransition(t: Transition) : Transition {
 		};	
 		return transition;
 	};
+	//default name of pre- and post state is null
 	var postname := "null";
 	if (t.poststate != null) {
 		postname := t.poststate.name;
@@ -91,17 +100,21 @@ query Set(Transition)::findTransition(t: Transition) : Transition {
 	return null;
 }
 
+//kick out all duplicate transitions
 helper eliminateDuplicateTransitions(allAutomata: Set(Automaton), duplicateFreeStates:Set(State)) : Set(Transition) {
 	var transitions : Set(Transition);
 	
 	allAutomata->forEach(automaton) {
 		automaton.transition->forEach(transition | not transitions->containsTransition(transition)) {
+			//create a transition using the duplicate free states if we haven't seen the transition yet
 			transitions += createTransition(transition, duplicateFreeStates);
 		}
 	};
 	return transitions;
 }
 
+//query to create a Transition between states
+//states is a lis
 query createTransition(transition: Transition, states: Set(State)) : Transition {
 	return object Transition {
 		operation := createOperation(transition.operation.name);
@@ -114,6 +127,8 @@ query createTransition(transition: Transition, states: Set(State)) : Transition 
 	
 	
 }
+
+//Find a state by name within a Set of states. Returns null if state is not found
 query Set(State)::findState(stateName: String) : State {
 	self->forEach(state | state.name = stateName) {
 		return state;
@@ -122,6 +137,7 @@ query Set(State)::findState(stateName: String) : State {
 	return null;
 }
 
+//Check if a transition is within a set of Transitions
 query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 	self->forEach(t) {
 		if(	t.operation.name != transition.operation.name or 
@@ -132,6 +148,7 @@ query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 		 	continue;
 		};
 		
+		//check if out messages of the current transition matches the argument's out messages
 		var transitionsSetsNotEqual := false;
 		t.outmessage->forEach(outMsg | not transition.outmessage->containsOutMessage(outMsg)){
 			transitionsSetsNotEqual := true;
@@ -145,9 +162,11 @@ query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 	return false;
 }
 
-
+//Check if a set of OutMessages contains one particular message
 query Set(OutMessage)::containsOutMessage(outMessage: OutMessage) : Boolean {
 	self->forEach(message) {
+		
+		//we only have a match if the return operation and object values are equal
 		if(	message._return.value = outMessage._return.value and
 			message.operation.name = outMessage.operation.name and 
 			message._object.name = outMessage._object.name) {
@@ -159,6 +178,7 @@ query Set(OutMessage)::containsOutMessage(outMessage: OutMessage) : Boolean {
 	return false;
 }
 
+//kick out all duplicate states that have the same name
 helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
 	var stateDict : Dict(String, State);
 	
@@ -174,6 +194,7 @@ helper eliminateDuplicateStates(allAutomata: Set(Automaton)) : Set(State) {
 	return stateDict->values()->asSet();
 }
 
+//copy OutMessages
 query createOutMessages(outMessage: OrderedSet(OutMessage)) : OrderedSet(OutMessage) {
 	var resultMessages: OrderedSet(OutMessage);
 	outMessage->forEach(message) {
