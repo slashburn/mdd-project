@@ -282,7 +282,7 @@ query Set(UML::Vertex)::findVertexWithName(name : String) : UML::Vertex {
 		}
 	};
 	
-	log("!!!!! vertex with name " + name + "not found");
+	log("!!!!! vertex with name " + name + " not found");
 	return null;
 }
 

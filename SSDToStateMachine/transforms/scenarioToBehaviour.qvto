@@ -112,22 +112,18 @@ mapping SystemCommunication::systemCommunicationToOutMessage() : OutMessage {
 		name := self.systemmessage.operation.name;
 	};
 	result._object := object Object {
-		name := self.systemmessage._object.name;
+		name := self.systemmessage.systemobject.name;
 	};
 	result._return := object Return {
 		if(self._return.oclIsTypeOf(Void)) {
-			_return := object Return {
-				value := "void"
-			}
+			value := "void"
 		} 
 		else {
 			var oldReturn := self._return.oclAsType(ssdRoot::Value);
-			_return := object Return{
-				value := oldReturn.value
-			}
+			value := oldReturn.value
 		};
-	}
-	
+	};
+	log("new out message: <" + result.operation.name + ", " + result._object.name + ", " + result._return.value + ">");
 }
 
 mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
@@ -135,7 +131,7 @@ mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
 		name := self.usermessage.operation.name;
 	};
 	result._object := object Object {
-		name := self.usermessage._object.name;
+		name := self.usermessage.user.name;
 	};
 	result._return := object Return {
 		if(self._return.oclIsTypeOf(Void)) {
@@ -149,7 +145,8 @@ mapping UserCommunication::userCommunicatonToOutMessage() : OutMessage {
 				value := oldReturn.value
 			}
 		};
-	}
+	};
+	log("new out message: <" + result.operation.name + ", " + result._object.name + ", " + result._return.value + ">");
 }
 
 
