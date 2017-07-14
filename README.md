@@ -15,7 +15,13 @@ Team members: Jan Göbel, Jens Wöhrle, Katja Ludwig
 * Papyrus
 * OCL Tools
 
-3) Clone the repo and import it by right clicking on your Project Explorer -> Import -> Existing Projects into Workspace. Browse the SSDToStateMachine Project and import the project.
+3) Clone the repo and import it by right clicking on your Project Explorer -> Import -> General-> Existing Projects into Workspace. Browse the SSDToStateMachine Project and import the project. Make sure that the **Copy projects into workspace is NOT checked**.
+4) If your IDE cannot resolve the custom defined URIs (in our case something like *mm:...*) then right click on the project (SSDToStateMachines) -> QVT Settings -> Metamodel Settings.
+Click Add and make sure the following three metamodels point to the correct .ecore files:
+   * *mm:sequequencediagram* should point to **SSDToStateMachine/metamodels/sequencediagram.ecore**
+   * *mm:behaviour* should point to **SSDToStateMachine/metamodels/behaviour.ecore**
+   * *mm:ioautomaton* should point to **SSDToStateMachine/metamodels/ioautomaton.ecore**
+
 
 ## Tutorials
 Check out the following tutorials to learn more about QVTO:
