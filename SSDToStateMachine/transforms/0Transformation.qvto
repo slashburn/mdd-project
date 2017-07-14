@@ -1,8 +1,8 @@
-import umlToScenario;
-import scenarioToBehaviour;
-import behaviourToAutomaton;
-import mergeAutomata;
-import automatonToStatemachine;
+import O1umlToScenario;
+import O2scenarioToBehaviour;
+import O3behaviourToAutomaton;
+import O4mergeAutomata;
+import O5automatonToStatemachine;
 
 modeltype UML uses  "http://www.eclipse.org/uml2/5.0.0/UML";
 modeltype ScenarioModel uses "mm:sequencediagram";
