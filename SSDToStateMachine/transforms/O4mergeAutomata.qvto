@@ -1,9 +1,10 @@
 modeltype IOAutomatonModel uses "mm:ioautomaton";
 
+//fourth transformation: merge the various automata created in the third transformation to one automaton per sender
 transformation mergeAutomata(in automata: IOAutomatonModel, out mergedAutomaton: IOAutomatonModel);
 
 main() {
-	log("\n\nTransformation Automata -> Automaton");
+	log("\n\n----------------------------------------------\nTransformation Automata -> Automaton");
 	var automatonContainer := automata.objectsOfType(AutomatonContainer);
 	automatonContainer->map mergeAutomata();	
 }

@@ -1,53 +1,68 @@
 modeltype BehaviourModel uses "mm:behaviour";
 modeltype IOAutomatonModel uses "mm:ioautomaton";
 
+//third transformation: from the tabular/block behaviour model to io automatons
 transformation behaviourToAutomaton(in behaviours: BehaviourModel, out automations: IOAutomatonModel);
 property stateDict : Dict(String, ioautomaton::State);
 
-
 main() {
-	log("\n\nTransformation Behaviour -> IOAutomaton");
+	log("\n\n--------------------------------------------\nTransformation Behaviour -> IOAutomaton");
 	log("#Behaviour container: " + behaviours.objectsOfType(BehaviourContainer)->size().toString());
 	
 	var behaviourcontainer := behaviours.objectsOfType(BehaviourContainer);
 	behaviourcontainer->map behaviourContainerToAutomatonContainer();
 }
 
+//map the behaviour container to an automaton container
 mapping BehaviourContainer::behaviourContainerToAutomatonContainer() : AutomatonContainer {
 	log("#Behaviours: " + self.behaviour->size().toString());
 	
+	//map every behaviour object to an automaton object
 	result.automaton := self.behaviour->map behaviourToAutomaton();
 }
 
+//map a behaviour to an automaton
 mapping Behaviour::behaviourToAutomaton() : Automaton {
 	
 	log("\nMapping behaviour of sender " + self.sender);
 	
 	result.sender := self.sender;
+	//the prestate of the first block is the inital state for the automaton
 	result.initialstate := createState(result, self.block->first().prestate.name);
+	//create all transitions for the io automaton from the blocks
 	result.transition := self.block->map blockToTransition(result);
 }
+
+//map a block to a transition object
 mapping Block::blockToTransition(inout automaton: Automaton) : Transition {
 	
 	log("Mapping block to transition - prestate: " + self.prestate.name + " poststate: " + self.poststate.name);
 	
 	result.prestate := createState(automaton, self.prestate.name);
 	result.poststate := createState(automaton, self.poststate.name);
+	
+	//the operation that this transition is representing is the operation from the inmessage from the block
 	result.operation := createOperation(self.inmessage.operation.name);
 	
 	result._return := createReturn(self.activation._return.value);
+	
+	//map the out messages from the block activation to the out messages of the transition
 	result.outmessage := self.activation.outmessage->map outMessagesConverter();
 }
 
+//map an behaviour out message to an io automaton out message
 mapping behaviourRoot::OutMessage::outMessagesConverter() : ioautomaton::OutMessage {
+	
 	operation := createOperation(self.operation.name);
-	//create receiver
+	
+	//create the receiver of this message
 	_object := createObject(self._object.name);
 	
 	_return := createReturn(self._return.value);
 	
 }
 
+//create a state with the given name or return an already existing one
 helper createState(inout automaton: Automaton, stateName: String) : ioautomaton::State {
 
 	log("State " + stateName + "is required");
@@ -71,16 +86,21 @@ helper createState(inout automaton: Automaton, stateName: String) : ioautomaton:
 	return state;
 }
 
+//create an operation object with the given name
 query createOperation(operationName: String): ioautomaton::Operation {
 	return object ioautomaton::Operation {
 		name := operationName
 	}
 }
+
+//create an return object with the given value
 query createReturn(returnValue: String): ioautomaton::Return {
 	return object ioautomaton::Return {
 		value := returnValue
 	}
 }
+
+//create an object object with the given name
 query createObject(objectName: String): ioautomaton::Object {
 	return object ioautomaton::Object {
 		name := objectName
