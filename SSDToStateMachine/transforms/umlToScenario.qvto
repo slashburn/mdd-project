@@ -39,24 +39,27 @@ mapping Interaction::interactionToScenario() : Scenario {
 		}
 		else if (interactionFragment.oclIsTypeOf(MessageOccurrenceSpecification))  {
 			var mos = interactionFragment.oclAsType(MessageOccurrenceSpecification);
-			if (mos.isSend()){
+			var mosType := mos.message.messageSort;
+//			if (mos.isSend()){
 				if (mos.message.messageSort = MessageSort::synchCall) {
-					communication +=  mos.message.map messageToUserCommunication();	
-				} else {
+					
+					//Synchronous calls correspond to system communications
 					communication +=  mos.message.map messageToSystemCommunication();
-				}			
-			}
-			else {
-				
-				var allSystemCommunications : Sequence(SystemCommunication) := communication->select(comm | comm.oclIsTypeOf(SystemCommunication)).oclAsType(OrderedSet(SystemCommunication));							
-				var allMatchingCommunications = allSystemCommunications->select(comm | comm.requestMatchesReply(mos.message));									
-				var matchedRequest := allSystemCommunications->last();
-				//var request : SystemCommunication := communication->select(c | c.oclIsTypeOf(SystemCommunication) and c.oclAsType(SystemCommunication).requestMatchesReply(mos.message))->last().oclAsType(SystemCommunication);
-				matchedRequest._return := createValueReturn(mos.message.name);
-			}
-		
-		}
-	};
+				} else if (mos.message.messageSort = MessageSort::asynchCall) {
+					
+					//asynch calls correspond to user communications
+					communication +=  mos.message.map messageToUserCommunication();	
+				} else if (mos.message.messageSort = MessageSort::reply) {
+					
+					//these messages are replies to system communications
+					var allSystemCommunications : OrderedSet(SystemCommunication) := communication->select(comm | comm.oclIsTypeOf(SystemCommunication)).oclAsType(SystemCommunication)->asOrderedSet();							
+					var allMatchingCommunications = allSystemCommunications->select(comm | comm.requestMatchesReply(mos.message));									
+					var matchedRequest := allMatchingCommunications->last();
+					matchedRequest._return := createValueReturn(mos.message.name);
+				}
+//			}
+		};
+	}
 		
 }
 
