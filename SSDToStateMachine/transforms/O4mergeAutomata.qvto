@@ -157,6 +157,10 @@ query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 		if(transitionsSetsNotEqual) {
 			continue;
 		};
+		//check if the transitions have the same return values - if not, non-determinism is detected. This algorithm chooses the value of the first transition and logs the problem
+		if (transition._return != t._return) {
+			log("!!!!! NON-DETERMINISM FOUND IN TRANSITION " + t.prestate.name + " -> " + t.poststate.name + " - the return values " + t._return.value + " and " + transition._return.value + " were found. The Algorithm chooses " + t._return.value);
+		};
 		return true;	
 	};
 	return false;
