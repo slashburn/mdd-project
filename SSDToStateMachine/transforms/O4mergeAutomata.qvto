@@ -15,15 +15,18 @@ mapping AutomatonContainer::mergeAutomata() : AutomatonContainer {
 	self.automaton.sender->asSet()->forEach(sender) {
 		log("Mapping automaton for " + sender);
 		
+		//select all automata with this sender
 		var senderAutomata := self.automaton->select(automaton | automaton.sender = sender);
+		//and merge them to one
 		var resultAutomaton := senderAutomata->mergeAutomata();
+		//set the sender of the merged automaton and add it to the container
 		resultAutomaton.sender := sender;
 		result.automaton += resultAutomaton;
 	}
 	
 }
 
-
+//merge a set of automata to one automaton
 helper Set(Automaton)::mergeAutomata() : Automaton {
 	var resultAutomaton := object Automaton {};
 	
@@ -31,6 +34,7 @@ helper Set(Automaton)::mergeAutomata() : Automaton {
 	var duplicateFreeStates := eliminateDuplicateStates(self);
 	var duplicateFreeTransitions := eliminateDuplicateTransitions(self, duplicateFreeStates);
 	
+	//adjust the transtitions to the duplicate free states
 	duplicateFreeStates->forEach(state) {
 		adjustTransitions(state, duplicateFreeTransitions);
 	};
@@ -44,7 +48,7 @@ helper Set(Automaton)::mergeAutomata() : Automaton {
 	return resultAutomaton;
 }
 
-//eliminate possible duplicate transitions to ensure consistency of the result automaton
+//eliminate possible duplicate transitions
 helper adjustTransitions(inout state: State, duplicateFreeTransitions: Set(Transition)) {
 	
 	log("Adjust transitions for state: " + state.name);
@@ -87,7 +91,7 @@ query Set(Transition)::findTransition(t: Transition) : Transition {
 		};	
 		return transition;
 	};
-	//default name of pre- and post state is null
+	//default name of pre- and post state is null (needed for a nicer log if null occurrs)
 	var postname := "null";
 	if (t.poststate != null) {
 		postname := t.poststate.name;
@@ -114,7 +118,7 @@ helper eliminateDuplicateTransitions(allAutomata: Set(Automaton), duplicateFreeS
 }
 
 //query to create a Transition between states
-//states is a lis
+//states is a set
 query createTransition(transition: Transition, states: Set(State)) : Transition {
 	return object Transition {
 		operation := createOperation(transition.operation.name);
@@ -158,7 +162,7 @@ query Set(Transition)::containsTransition(transition: Transition) : Boolean {
 			continue;
 		};
 		//check if the transitions have the same return values - if not, non-determinism is detected. This algorithm chooses the value of the first transition and logs the problem
-		if (transition._return != t._return) {
+		if (transition._return.value != t._return.value) {
 			log("!!!!! NON-DETERMINISM FOUND IN TRANSITION " + t.prestate.name + " -> " + t.poststate.name + " - the return values " + t._return.value + " and " + transition._return.value + " were found. The Algorithm chooses " + t._return.value);
 		};
 		return true;	

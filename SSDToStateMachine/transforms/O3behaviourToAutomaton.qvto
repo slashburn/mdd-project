@@ -27,7 +27,7 @@ mapping Behaviour::behaviourToAutomaton() : Automaton {
 	log("\nMapping behaviour of sender " + self.sender);
 	
 	result.sender := self.sender;
-	//the prestate of the first block is the inital state for the automaton -- indeterministic if not equal
+	//the prestate of the first block is the inital state for the automaton
 	result.initialstate := createState(result, self.block->first().prestate.name);
 	//create all transitions for the io automaton from the blocks
 	result.transition := self.block->map blockToTransition(result);
